@@ -28,44 +28,42 @@ class MensageiroController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+        'nome_mensageiro' => 'required|string|max:255',
+        'telefone' => 'required|string|max:255',
+        'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro',
+    ]);
+    
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'Erro de validação',
+            'errors' => $validator->errors()
+        ], 422);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    $mensageiro = Mensageiro::create($validator->validated());
+
+    return response()->json($mensageiro, 201);
+    }
+
     public function show(Mensageiro $mensageiro)
     {
         return $mensageiro;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Mensageiro $mensageiro)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Mensageiro $mensageiro)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Mensageiro $mensageiro)
     {
-        //
+        
     }
 
     public function getAtivos()
     {
-    $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
-    return response()->json($mensageirosAtivos);
+        $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
+        return response()->json($mensageirosAtivos);
     }
 }
