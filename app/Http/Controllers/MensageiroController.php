@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Mensageiro;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class MensageiroController extends Controller
 {
@@ -13,7 +12,7 @@ class MensageiroController extends Controller
      */
     public function index()
     {
-        //
+        return Mensageiro::all();
     }
 
     /**
@@ -52,7 +51,7 @@ class MensageiroController extends Controller
      */
     public function show(Mensageiro $mensageiro)
     {
-        //
+        return $mensageiro;
     }
 
     /**
@@ -77,5 +76,11 @@ class MensageiroController extends Controller
     public function destroy(Mensageiro $mensageiro)
     {
         //
+    }
+
+    public function getAtivos()
+    {
+    $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
+    return response()->json($mensageirosAtivos);
     }
 }
