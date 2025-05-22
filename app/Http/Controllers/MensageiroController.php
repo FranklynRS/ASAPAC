@@ -33,12 +33,10 @@ class MensageiroController extends Controller
         return response()->json($mensageiro, 201);
     }
 
-
     public function show(Mensageiro $mensageiro)
     {
         return $mensageiro;
     }
-
 
     public function update(Request $request, Mensageiro $mensageiro)
     {
@@ -59,7 +57,6 @@ class MensageiroController extends Controller
 
         return response()->json($mensageiro, 200);
     }
-
 
 
     public function getAtivos()
