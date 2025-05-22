@@ -13,7 +13,7 @@ class MensageiroController extends Controller
      */
     public function index()
     {
-        //
+        return Mensageiro::all();
     }
 
     /**
@@ -47,35 +47,25 @@ class MensageiroController extends Controller
     return response()->json($mensageiro, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Mensageiro $mensageiro)
     {
-        //
+        return $mensageiro;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Mensageiro $mensageiro)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Mensageiro $mensageiro)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Mensageiro $mensageiro)
     {
-        //
+        
+    }
+
+    public function getAtivos()
+    {
+        $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
+        return response()->json($mensageirosAtivos);
+
     }
 }
