@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mensageiro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MensageiroController extends Controller
 {
@@ -65,5 +66,6 @@ class MensageiroController extends Controller
     {
         $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
         return response()->json($mensageirosAtivos);
+
     }
 }
