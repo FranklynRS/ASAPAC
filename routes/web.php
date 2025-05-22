@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/mensageiros', function () {
+Route::get('/', function () {
     return view('welcome');
     
 });
