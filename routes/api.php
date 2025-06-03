@@ -8,3 +8,17 @@ Route::get('mensageiros/ativos', [MensageiroController::class, 'getAtivos']);
 
 Route::apiResource('mensageiros', MensageiroController::class)
     ->except(['destroy']);
+
+use App\Http\Controllers\CategoriaController;
+
+Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::post('/categorias', [CategoriaController::class, 'store']);
+Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
+
+use App\Http\Controllers\UsuarioController;
+
+Route::post('/usuarios', [UsuarioController::class, 'store']);
+Route::post('/usuarios/login', [UsuarioController::class, 'login']);
+Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
+Route::get('/usuarios', [UsuarioController::class, 'index']);
+Route::get('/usuarios/{id}', [UsuarioController::class, 'index']);
