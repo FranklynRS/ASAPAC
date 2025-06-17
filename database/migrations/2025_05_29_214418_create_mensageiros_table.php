@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nome_mensageiro');
             $table->string('telefone');
             $table->string('codigo_mensageiro')->nullable();
+            $table->boolean('status')->default(true);
         });
     }
 

@@ -10,7 +10,7 @@ class Mensageiro extends Model
 
     protected $primaryKey = 'id_mensageiro';
 
-    protected $fillable = ['nome_mensageiro', 'telefone', 'codigo_mensageiro',];
+    protected $fillable = ['nome_mensageiro', 'telefone', 'codigo_mensageiro', 'status'];
 
     public $timestamps = false;
 

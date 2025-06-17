@@ -44,6 +44,7 @@ class MensageiroController extends Controller
             'nome_mensageiro' => 'required|string|max:255',
             'telefone' => 'required|string|max:255',
             'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro,' . $mensageiro->id_mensageiro . ',id_mensageiro',
+            'status' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -58,10 +59,9 @@ class MensageiroController extends Controller
         return response()->json($mensageiro, 200);
     }
 
-
     public function getAtivos()
     {
-        $mensageirosAtivos = Mensageiro::where('ativo', true)->get();
+        $mensageirosAtivos = Mensageiro::where('status', true)->get();
         return response()->json($mensageirosAtivos);
     }
 }
