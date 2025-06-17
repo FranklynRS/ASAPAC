@@ -5,23 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {    
     // Cadastro
-    public function store(Request $request)
+public function store(Request $request)
     {
-        $data = $request->validate([
-            'nome_usuario' => 'required|string',
-            'email_usuario' => 'required|email|unique:usuarios,email_usuario',
-            'senha_usuario' => 'required|string|min:6',
-        ]);
+        try {
+            $mensagens = [
+                'email_usuario.email' => 'Formato de e-mail inválido.',
+                'email_usuario.unique' => 'Este e-mail já está em uso.',
+            ];
 
-        $data['senha_usuario'] = bcrypt($data['senha_usuario']);
+            $data = $request->validate([
+                'nome_usuario' => 'required|string',
+                'email_usuario' => 'required|email|unique:usuarios,email_usuario',
+                'senha_usuario' => 'required|string|min:6',
+            ], $mensagens);
 
-        $usuario = Usuario::create($data);
+            $data['senha_usuario'] = bcrypt($data['senha_usuario']);
+            $usuario = Usuario::create($data);
 
-        return response()->json(['message' => 'Usuário criado com sucesso', 'usuario' => $usuario], 201);
+            return response()->json(['message' => 'Usuário criado com sucesso', 'usuario' => $usuario], 201);
+
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     // Login
@@ -46,19 +57,34 @@ class UsuarioController extends Controller
     {
         $usuario = Usuario::findOrFail($id);
 
-        $data = $request->validate([
-            'nome_usuario' => 'sometimes|required|string',
-            'email_usuario' => 'sometimes|required|email|unique:usuarios,email_usuario,'.$usuario->id_usuario.',id_usuario',
-            'senha_usuario' => 'sometimes|required|string|min:6',
-        ]);
+        try {
+            $mensagens = [
+                'email_usuario.email' => 'Formato de e-mail inválido.',
+                'email_usuario.unique' => 'Este e-mail já está em uso.',
+            ];
 
-        if (isset($data['senha_usuario'])) {
-            $data['senha_usuario'] = bcrypt($data['senha_usuario']);
+            $data = $request->validate([
+                'nome_usuario' => 'sometimes|required|string',
+                'email_usuario' => [
+                    'sometimes',
+                    'required',
+                    'email',
+                    Rule::unique('usuarios', 'email_usuario')->ignore($usuario->id_usuario, 'id_usuario'),
+                ],
+                'senha_usuario' => 'sometimes|required|string|min:6',
+            ], $mensagens);
+
+            if (isset($data['senha_usuario'])) {
+                $data['senha_usuario'] = bcrypt($data['senha_usuario']);
+            }
+
+            $usuario->update($data);
+
+            return response()->json(['message' => 'Usuário atualizado com sucesso', 'usuario' => $usuario]);
+
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         }
-
-        $usuario->update($data);
-
-        return response()->json(['message' => 'Usuário atualizado com sucesso', 'usuario' => $usuario]);
     }
 
     // Pesquisa
