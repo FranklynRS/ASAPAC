@@ -59,8 +59,6 @@ class MensageiroController extends Controller
         return response()->json($mensageiro, 200);
     }
 
-
-
     public function getAtivos()
     {
         $mensageirosAtivos = Mensageiro::where('status', true)->get();

@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 class UsuarioController extends Controller
 {    
     // Cadastro
-    public function store(Request $request)
+public function store(Request $request)
     {
         try {
             $mensagens = [
