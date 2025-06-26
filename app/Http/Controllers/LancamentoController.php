@@ -38,12 +38,12 @@ class LancamentoController extends Controller
         $lancamento = Lancamento::findOrFail($id);
 
         $validated = $request->validate([
-            'descricao' => 'sometimes|string|max:255',
-            'data_lancamento' => 'sometimes|date',
+            'descricao' => 'required|string|max:255',
+            'data_lancamento' => 'required|date',
             'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
-            'id_mes' => 'sometimes|integer',
-            'id_categoria' => 'sometimes|integer',
-            'valor' => 'sometimes|numeric'
+            'id_mes' => 'required|integer|exists:meses,id_mes',
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
+            'valor' => 'required|numeric'
         ]);
 
         $lancamento->update($validated);

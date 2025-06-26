@@ -30,3 +30,4 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 use App\Http\Controllers\LancamentoController;
 
 Route::apiResource('lancamentos', LancamentoController::class);
+Route::put('/lancamentos', [LancamentoController::class, 'update']);
