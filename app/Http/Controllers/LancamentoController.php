@@ -41,8 +41,8 @@ class LancamentoController extends Controller
             'descricao' => 'sometimes|string|max:255',
             'data_lancamento' => 'sometimes|date',
             'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
-            'id_mes' => 'sometimes|integer',
-            'id_categoria' => 'sometimes|integer',
+            'id_mes' => 'required|integer|exists:meses,id_mes',
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'valor' => 'sometimes|numeric'
         ]);
 
