@@ -11,7 +11,7 @@ class AcertoController extends Controller
     /* Lista todos os acertos. (GET /api/acertos) */
     public function index()
     {
-        $acertos = Acerto::with(['mensageiro', 'usuario'])->get();
+        $acertos = Acerto::with(['mensageiro'])->get();
         return response()->json($acertos);
     }
 
@@ -29,13 +29,13 @@ class AcertoController extends Controller
 
         $acerto = Acerto::create($validator->validated());
 
-        return response()->json($acerto->load(['mensageiro', 'usuario']), 201);
+        return response()->json($acerto->load(['mensageiro']), 201);
     }
 
     /* Exibe um acerto específico. (GET /api/acertos/{acerto})*/
     public function show(Acerto $acerto)
     {
-        return response()->json($acerto->load(['mensageiro', 'usuario']));
+        return response()->json($acerto->load(['mensageiro']));
     }
 
     /* Atualiza um acerto existente. (PUT /api/acertos/{acerto})*/
@@ -52,7 +52,7 @@ class AcertoController extends Controller
 
         $acerto->update($validator->validated());
 
-        return response()->json($acerto->load(['mensageiro', 'usuario']));
+        return response()->json($acerto->load(['mensageiro']));
     }
 
     /* Exclui um acerto. (DELETE /api/acertos/{acerto}) */
@@ -66,8 +66,8 @@ class AcertoController extends Controller
     private function getValidationRules(): array
     {
         return [
-            'id_mensageiro' => 'required|integer|exists:mensageiros,id_mensageiro',
             'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
+            'id_mensageiro' => 'required|integer|exists:mensageiros,id_mensageiro',
             'valor_recebido' => 'required|numeric|min:0',
             'pagamento' => 'required|numeric|min:0',
             'gasolina' => 'required|numeric|min:0',
