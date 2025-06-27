@@ -25,4 +25,9 @@ class Mes extends Model
             'ano_mes' => 'required|string|size:7|unique:meses,ano_mes,'.$id.',id_mes|regex:/^\d{4}-\d{2}$/'
         ];
     }
+    //Relatorio
+    public function lancamentos()
+{
+    return $this->hasMany(Lancamento::class, 'id_mes', 'id_mes');
+}
 }

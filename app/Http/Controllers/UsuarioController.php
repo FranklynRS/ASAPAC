@@ -53,6 +53,7 @@ public function store(Request $request)
     }
 
     // Edição
+    
     public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);
