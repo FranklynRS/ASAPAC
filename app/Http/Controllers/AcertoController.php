@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Acerto;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class AcertoController extends Controller
 {
+
     public function index()
     {
         $acertos = Acerto::with(['mensageiro'])->get();
@@ -16,16 +16,9 @@ class AcertoController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), $this->getValidationRules());
+        $validatedData = $request->validate($this->getValidationRules());
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Erro na validação dos dados',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $acerto = Acerto::create($validator->validated());
+        $acerto = Acerto::create($validatedData);
 
         return response()->json($acerto->load(['mensageiro']), 201);
     }
@@ -37,36 +30,36 @@ class AcertoController extends Controller
 
     public function update(Request $request, Acerto $acerto)
     {
-        $validator = Validator::make($request->all(), $this->getValidationRules());
+        // Passamos 'true' para obter as regras de atualização (com 'sometimes').
+        $validatedData = $request->validate($this->getValidationRules(true));
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Erro na validação dos dados',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $acerto->update($validator->validated());
+        $acerto->update($validatedData);
 
         return response()->json($acerto->load(['mensageiro']));
     }
 
-    public function destroy(Acerto $acerto)
+    public function destroy($id)
     {
+
+        $acerto = Acerto::findOrFail($id);
         $acerto->delete();
-        return response()->json(null, 204);
+
+        return response()->json(['message' => 'Acerto excluído com sucesso']);
     }
 
-    private function getValidationRules(): array
+    private function getValidationRules(bool $isUpdate = false): array
     {
+
+        $rule = $isUpdate ? 'sometimes' : 'required';
+
         return [
-            'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
-            'id_mensageiro' => 'required|integer|exists:mensageiros,id_mensageiro',
-            'valor_recebido' => 'required|numeric|min:0',
-            'pagamento' => 'required|numeric|min:0',
-            'gasolina' => 'required|numeric|min:0',
-            'alimentacao' => 'required|numeric|min:0',
-            'outros' => 'required|numeric|min:0',
+            'id_usuario' => [$rule, 'integer', 'exists:usuarios,id_usuario'],
+            'id_mensageiro' => [$rule, 'integer', 'exists:mensageiros,id_mensageiro'],
+            'valor_recebido' => [$rule, 'numeric', 'min:0'],
+            'pagamento' => [$rule, 'numeric', 'min:0'],
+            'gasolina' => [$rule, 'numeric', 'min:0'],
+            'alimentacao' => [$rule, 'numeric', 'min:0'],
+            'outros' => [$rule, 'numeric', 'min:0'],
         ];
     }
 }
