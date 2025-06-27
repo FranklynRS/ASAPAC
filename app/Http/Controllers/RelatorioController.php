@@ -5,64 +5,75 @@ namespace App\Http\Controllers;
 use App\Models\Lancamento;
 use App\Models\Acerto;
 use App\Models\Mes;
-use Illuminate\Http\Request;
 
 class RelatorioController extends Controller
 {
     public function show($id_mes)
     {
-        // Verifica se o mês existe
-        $mes = Mes::with('lancamentos.categoria', 'lancamentos.usuario')
-                  ->find($id_mes);
+        $mes = Mes::with('lancamentos.categoria', 'lancamentos.usuario')->find($id_mes);
 
         if (!$mes) {
             return response()->json(['erro' => 'Mês não encontrado'], 404);
         }
 
-        // LANÇAMENTOS (RECEITAS)
-        $lancamentos = Lancamento::with('categoria', 'usuario')
-            ->where('id_mes', $id_mes)
-            ->get();
+        // Lançamentos
+        $dadosLancamentos = [];
+        $totalLancamentos = 0;
 
-        $totalReceitas = $lancamentos->sum('valor');
+        foreach ($mes->lancamentos as $l) {
+            $categoriaNome = $l->categoria->nome_categoria ?? 'Desconhecida';
+            $tipo = $l->categoria->tipo; // 1 = entrada, 0 = saída
+            $valor = floatval($l->valor) * ($tipo == 0 ? -1 : 1);
+            $totalLancamentos += $valor;
 
-        $dadosLancamentos = $lancamentos->map(function ($l) {
-            return [
+            $dadosLancamentos[$categoriaNome][] = [
                 'descricao'     => $l->descricao,
-                'valor'         => $l->valor,
+                'valor'         => $valor,
                 'data'          => $l->data_lancamento,
-                'nome_categoria'=> $l->categoria->nome_categoria ?? null,
                 'nome_usuario'  => $l->usuario->nome_usuario ?? null,
             ];
-        });
+        }
 
-        // ACERTOS (DESPESAS)
-        $acertos = Acerto::with('usuario')
-            ->whereHas('usuario', function ($query) use ($id_mes) {
-                $query->whereIn('id_usuario', function ($sub) use ($id_mes) {
-                    $sub->select('id_usuario')->from('lancamentos')->where('id_mes', $id_mes);
-                });
-            })
-            ->get();
-
-        // Somando despesas por tipo
-        $totalDespesas = [
-            'pagamento'    => $acertos->sum('pagamento'),
-            'gasolina'     => $acertos->sum('gasolina'),
-            'alimentacao'  => $acertos->sum('alimentacao'),
-            'outros'       => $acertos->sum('outros'),
+        // Acertos
+        $acertos = Acerto::with('usuario')->get(); // ajuste se quiser filtrar por mês
+        $dadosAcertos = [
+            'valor_recebido' => [],
+            'pagamento'      => [],
+            'gasolina'       => [],
+            'alimentacao'    => [],
+            'outros'         => []
         ];
+        $totalAcertos = 0;
 
-        $somaDespesas = array_sum($totalDespesas);
-        $saldo = $totalReceitas - $somaDespesas;
+        foreach ($acertos as $a) {
+            $usuario = $a->usuario->nome_usuario ?? null;
+
+            // Receita
+            $valorRecebido = floatval($a->valor_recebido);
+            $dadosAcertos['valor_recebido'][] = [
+                'valor' => $valorRecebido,
+                'nome_usuario' => $usuario
+            ];
+            $totalAcertos += $valorRecebido;
+
+            // Despesas
+            foreach (['pagamento', 'gasolina', 'alimentacao', 'outros'] as $campo) {
+                $valor = floatval($a->$campo);
+                if ($valor > 0) {
+                    $dadosAcertos[$campo][] = [
+                        'valor' => -$valor,
+                        'nome_usuario' => $usuario
+                    ];
+                    $totalAcertos -= $valor;
+                }
+            }
+        }
 
         return response()->json([
-            'ano_mes'           => $mes->ano_mes,
-            'total_receitas'    => round($totalReceitas, 2),
-            'total_despesas'    => array_map(fn($v) => round($v, 2), $totalDespesas),
-            'saldo'             => round($saldo, 2),
-            'lancamentos'       => $dadosLancamentos,
-        ], 200);
+            'ano_mes'     => $mes->ano_mes,
+            'lancamentos' => $dadosLancamentos,
+            'acertos'     => $dadosAcertos,
+            'saldo'       => round($totalLancamentos + $totalAcertos, 2)
+        ]);
     }
 }
-

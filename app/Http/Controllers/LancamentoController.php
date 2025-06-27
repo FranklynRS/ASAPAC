@@ -9,7 +9,7 @@ class LancamentoController extends Controller
 {
     public function index()
     {
-        $lancamentos = Lancamento::with('categoria', 'usuario')->get();
+        $lancamentos = Lancamento::with('categoria', 'usuario', 'mes')->get();
 
         return response()->json($lancamentos);
     }
