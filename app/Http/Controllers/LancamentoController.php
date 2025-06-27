@@ -9,7 +9,9 @@ class LancamentoController extends Controller
 {
     public function index()
     {
-        return response()->json(Lancamento::all());
+        $lancamentos = Lancamento::with('categoria', 'usuario')->get();
+
+        return response()->json($lancamentos);
     }
 
     public function store(Request $request)
