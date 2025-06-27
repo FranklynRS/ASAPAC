@@ -10,9 +10,7 @@ use App\Http\Controllers\AcertoController;
 use App\Http\Controllers\LancamentoController;
 
 // Rotas para Mensageiros
-Route::post('/mensageiros', [MensageiroController::class, 'store']);
 Route::get('mensageiros/ativos', [MensageiroController::class, 'getAtivos']);
-
 Route::apiResource('mensageiros', MensageiroController::class)
     ->except(['destroy']);
 

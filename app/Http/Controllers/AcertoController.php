@@ -8,14 +8,12 @@ use Illuminate\Support\Facades\Validator;
 
 class AcertoController extends Controller
 {
-    /* Lista todos os acertos. (GET /api/acertos) */
     public function index()
     {
         $acertos = Acerto::with(['mensageiro'])->get();
         return response()->json($acertos);
     }
 
-    /* Cria um novo acerto. (POST /api/acertos) */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), $this->getValidationRules());
@@ -32,13 +30,11 @@ class AcertoController extends Controller
         return response()->json($acerto->load(['mensageiro']), 201);
     }
 
-    /* Exibe um acerto específico. (GET /api/acertos/{acerto})*/
     public function show(Acerto $acerto)
     {
         return response()->json($acerto->load(['mensageiro']));
     }
 
-    /* Atualiza um acerto existente. (PUT /api/acertos/{acerto})*/
     public function update(Request $request, Acerto $acerto)
     {
         $validator = Validator::make($request->all(), $this->getValidationRules());
@@ -55,14 +51,12 @@ class AcertoController extends Controller
         return response()->json($acerto->load(['mensageiro']));
     }
 
-    /* Exclui um acerto. (DELETE /api/acertos/{acerto}) */
     public function destroy(Acerto $acerto)
     {
         $acerto->delete();
         return response()->json(null, 204);
     }
 
-    /* Regras de validação centralizadas e corrigidas. */
     private function getValidationRules(): array
     {
         return [
