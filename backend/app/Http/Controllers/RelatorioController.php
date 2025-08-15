@@ -58,7 +58,7 @@ class RelatorioController extends Controller
 
             // Despesas
             foreach (['pagamento', 'gasolina', 'alimentacao', 'outros'] as $campo) {
-                $valor = floatval($a->$campo);
+                $valor = floatval($a->$campo); 
                 if ($valor > 0) {
                     $dadosAcertos[$campo][] = [
                         'valor' => -$valor,

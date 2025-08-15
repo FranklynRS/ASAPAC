@@ -79,7 +79,7 @@ class LancamentoController extends Controller
         $lancamento = Lancamento::findOrFail($id);
         $lancamento->delete();
 
-        return response()->json(['message' => 'Lançamento excluído com sucesso']);
+        return response()->json(['message' => 'Lançamento excluído com sucesso']); 
     }
 }
 
