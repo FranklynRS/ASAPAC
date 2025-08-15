@@ -15,7 +15,7 @@ class CategoriaController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [ 
             'nome_categoria' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'tipo' => 'required|boolean', // 1 = entrada, 0 = saída
@@ -51,5 +51,11 @@ class CategoriaController extends Controller
         $categoria->update($validator->validated());
 
         return response()->json($categoria, 200);
+    }
+
+    public function show($id)
+    {
+        $categoria = Categoria::findOrFail($id);
+        return response()->json($categoria);
     }
 }
