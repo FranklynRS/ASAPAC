@@ -15,6 +15,7 @@ Route::apiResource('mensageiros', MensageiroController::class)
     ->except(['destroy']);
 
 Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/categorias/{id}', [CategoriaController::class, 'show']);
 Route::post('/categorias', [CategoriaController::class, 'store']);
 Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
 
