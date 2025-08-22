@@ -1,0 +1,76 @@
+@use '../../styles/variables.scss' as *;
+
+.login-form {
+  width: 100%;
+}
+
+.form-header {
+  margin-bottom: $spacing-lg;
+}
+
+.form-title {
+  font-size: 32px;
+  font-weight: 800; // Peso máximo para destaque forte
+  color: $primary-color; // Usando a mesma cor azul do fundo da logo
+  margin: 0 0 $spacing-sm 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+
+  @media (max-width: $mobile) {
+    font-size: 24px;
+  }
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+}
+
+.form-fields {
+  margin-bottom: $spacing-md;
+
+  .input-wrapper {
+    margin-bottom: $spacing-md;
+
+    &:last-of-type {
+      margin-bottom: $spacing-lg;
+    }
+  }
+}
+
+.form-footer {
+  text-align: center;
+}
+
+.forgot-password-link {
+  color: $primary-color;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  transition: text-decoration 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.alert {
+  padding: $spacing-md;
+  border-radius: $border-radius;
+  margin-bottom: $spacing-md;
+  font-size: 14px;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+
+  &.alert-error {
+    background-color: #FEF2F2;
+    color: #B91C1C;
+    border: 1px solid #FECACA;
+  }
+
+  &.alert-success {
+    background-color: #F0FDF4;
+    color: #166534;
+    border: 1px solid #BBF7D0;
+  }
+}

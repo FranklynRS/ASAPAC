@@ -1,0 +1,90 @@
+@use '../../styles/variables.scss' as *;
+
+.input-wrapper {
+  width: 100%;
+  margin-bottom: $spacing-md;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #D1D5DB;
+  border-radius: $border-radius;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #9CA3AF;
+  }
+
+  &:focus-within {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba(74, 93, 184, 0.1);
+  }
+
+  &.error {
+    border-color: $error-color;
+    
+    &:focus-within {
+      border-color: $error-color;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+.input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  background: transparent;
+  color: $text-primary;
+
+  &::placeholder {
+    color: #9CA3AF;
+    font-weight: 400;
+  }
+
+  &:disabled {
+    background-color: #F9FAFB;
+    color: #6B7280;
+    cursor: not-allowed;
+  }
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  
+  &.start {
+    padding-left: 16px;
+    padding-right: 8px;
+  }
+  
+  &.end {
+    padding-left: 8px;
+    padding-right: 16px;
+    cursor: pointer;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.helper-text {
+  margin-top: 4px;
+  font-size: 14px;
+  color: $text-secondary;
+  
+  &.error {
+    color: $error-color;
+  }
+}

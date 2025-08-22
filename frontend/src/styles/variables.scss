@@ -1,0 +1,43 @@
+// Colors baseadas no design ASAPAC
+$primary-color: #4A5DB8;
+$primary-light: #6B7ED6;
+$primary-dark: #3A4A96;
+
+$secondary-color: #22C55E;
+$secondary-light: #4ADE80;
+$secondary-dark: #16A34A;
+
+$background-default: #F8FAFC;
+$background-paper: #FFFFFF;
+
+$text-primary: #1E293B;
+$text-secondary: #64748B;
+$text-placeholder: #94A3B8;
+
+$error-color: #EF4444;
+$success-color: #10B981;
+$warning-color: #F59E0B;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// Border radius
+$border-radius: 8px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+// Breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$wide: 1200px;

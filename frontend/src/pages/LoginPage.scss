@@ -1,0 +1,89 @@
+@use '../styles/variables.scss' as *;
+
+.login-page {
+  min-height: 100vh;
+  background-color: $background-default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md;
+
+  @media (max-width: $tablet) {
+    padding: $spacing-sm;
+  }
+}
+
+.login-container {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 500px;
+
+  @media (max-width: $tablet) {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    border-radius: $border-radius;
+  }
+
+  @media (max-width: $mobile) {
+    border-radius: 0;
+    min-height: 100vh;
+    max-width: 100%;
+  }
+}
+
+.logo-section {
+  background: linear-gradient(135deg, #4A5DB8 0%, #3A4A96 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl;
+
+  @media (max-width: $tablet) {
+    padding: $spacing-xl;
+    min-height: 200px;
+  }
+
+  @media (max-width: $mobile) {
+    padding: $spacing-lg;
+  }
+}
+
+.logo-wrapper {
+  text-align: center;
+}
+
+.logo {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+
+  @media (max-width: $mobile) {
+    max-width: 200px;
+  }
+}
+
+.form-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl;
+
+  @media (max-width: $tablet) {
+    padding: $spacing-xl;
+  }
+
+  @media (max-width: $mobile) {
+    padding: $spacing-lg;
+  }
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 400px;
+}
