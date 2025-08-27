@@ -6,16 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('meses', function (Blueprint $table) {
-            $table->id('id_mes');
+            $table->bigIncrements('id_mes');
             $table->string('ano_mes', 7)->unique();
-            $table->timestamps(); // Mantive mas pode remover se seu grupo não usa
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('meses');
     }

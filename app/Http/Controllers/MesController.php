@@ -36,7 +36,7 @@ class MesController extends Controller
         return response()->json($mes);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) 
     {
         $mes = Mes::findOrFail($id);
 

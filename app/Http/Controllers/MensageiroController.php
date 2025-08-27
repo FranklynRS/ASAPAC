@@ -38,8 +38,10 @@ class MensageiroController extends Controller
         return $mensageiro;
     }
 
-    public function update(Request $request, Mensageiro $mensageiro)
+    public function update(Request $request, $id)
     {
+        $mensageiro = Mensageiro::findOrFail($id);
+
         $validator = Validator::make($request->all(), [
             'nome_mensageiro' => 'required|string|max:255',
             'telefone' => 'required|string|max:255',
