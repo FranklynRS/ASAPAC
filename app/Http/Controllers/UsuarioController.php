@@ -67,6 +67,8 @@ class UsuarioController extends Controller
         ]);
     }
 
+
+
     // Edição
     public function update(Request $request, $id)
     {
@@ -130,7 +132,7 @@ class UsuarioController extends Controller
     public function logout()
     {
         auth()->logout();
-        return response()->json(['message' => 'Logout realizado com sucesso']);
+        return response()->json(['message ' => 'Logout realizado com sucesso']);
     }
 
     // Refresh token
