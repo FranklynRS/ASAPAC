@@ -33,3 +33,7 @@ Route::apiResource('meses', MesController::class)
 Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
  
 Route::apiResource('acertos', AcertoController::class);
+
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('me', [AutenticacaoController::class, 'me']);
+});

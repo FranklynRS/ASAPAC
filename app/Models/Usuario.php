@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Usuario extends Authenticatable
+class Usuario extends Authenticatable implements JWTSubject
 {
-    protected $table = 'usuarios'; // confere se sua tabela chama "usuarios"
-
+    protected $table = 'usuarios'; // tabela no banco
     protected $primaryKey = 'id_usuario';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -26,5 +25,18 @@ class Usuario extends Authenticatable
     public function getAuthPassword()
     {
         return $this->senha_usuario;
+    }
+
+    // Retorna o identificador único para o JWT (normalmente a PK).
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    //  Retorna claims customizados (se quiser adicionar infos extras ao token).
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
