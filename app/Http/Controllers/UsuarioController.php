@@ -46,28 +46,26 @@ class UsuarioController extends Controller
     // Login
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email_usuario' => 'required|email',
-            'senha_usuario' => 'required|string',
-        ]);
+    $data = $request->validate([
+        'email_usuario' => 'required|email',
+        'senha_usuario' => 'required|string',
+    ]);
 
-        $credentials = [
-            'email_usuario' => $data['email_usuario'],
-            'password' => $data['senha_usuario'], // o auth usa getAuthPassword()
-        ];
+    $usuario = Usuario::where('email_usuario', $data['email_usuario'])->first();
 
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['message' => 'Credenciais inválidas'], 401);
-        }
-
-        return response()->json([
-            'message' => 'Login realizado com sucesso',
-            'usuario' => auth()->user(),
-            'token'   => $token
-        ]);
+    if (!$usuario || !Hash::check($data['senha_usuario'], $usuario->senha_usuario)) {
+        return response()->json(['message' => 'Credenciais inválidas'], 401);
     }
 
+    // Gera token manualmente
+    $token = JWTAuth::fromUser($usuario);
 
+    return response()->json([
+        'message' => 'Login realizado com sucesso',
+        'usuario' => $usuario,
+        'token' => $token,
+    ]);
+}
 
     // Edição
     public function update(Request $request, $id)

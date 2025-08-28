@@ -39,12 +39,13 @@ Route::apiResource('meses', MesController::class)
 Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
 Route::apiResource('acertos', AcertoController::class);
 
-Route::middleware('auth:api')->group(function () {
+Route::middleware('jwt.auth')->group(function () {
 
 // Usuário autenticado
 Route::get('/usuarios/me', [UsuarioController::class, 'me']);
 Route::post('/usuarios/logout', [UsuarioController::class, 'logout']);
 Route::post('/usuarios/refresh', [UsuarioController::class, 'refresh']);
+Route::get('/usuarios', [UsuarioController::class, 'index']);
 
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
