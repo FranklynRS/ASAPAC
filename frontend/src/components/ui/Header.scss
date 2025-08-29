@@ -1,0 +1,32 @@
+@import '../../styles/variables.scss';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba($color-primary, 0.1);
+  margin-bottom: 32px;
+  
+  &__logo {
+    flex-shrink: 0;
+  }
+  
+  &__content {
+    flex: 1;
+    text-align: center;
+  }
+  
+  &__actions {
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    
+    &__content {
+      order: -1;
+    }
+  }
+}
