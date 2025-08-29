@@ -1,0 +1,31 @@
+@use '../../styles/variables' as *;
+
+.button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+  
+  &--primary {
+    background-color: $button-green;
+    color: white;
+    
+    &:hover {
+      background-color: darken($button-green, 10%);
+    }
+  }
+  
+  &--secondary {
+    background-color: transparent;
+    color: $text-secondary;
+    
+    &:hover {
+      color: $text-primary;
+    }
+  }
+}

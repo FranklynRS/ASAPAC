@@ -1,0 +1,36 @@
+@use '../../styles/variables' as *;
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    border-color: $left-section-color;
+  }
+  
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.input-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}

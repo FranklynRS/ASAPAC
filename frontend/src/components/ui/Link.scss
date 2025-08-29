@@ -1,0 +1,14 @@
+@use '../../styles/variables' as *;
+
+.link {
+  color: $left-section-color;
+  text-decoration: none;
+  font-size: 14px;
+  text-align: center;
+  display: block;
+  margin-top: 16px;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}

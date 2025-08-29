@@ -1,0 +1,11 @@
+@use '../../styles/variables' as *;
+
+.login-card {
+  display: flex;
+  width: 900px;
+  height: 550px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+}

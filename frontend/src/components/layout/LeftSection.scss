@@ -1,0 +1,10 @@
+@use '../../styles/variables' as *;
+
+.left-section {
+  background-color: $left-section-color;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px 0 0 20px;
+}
