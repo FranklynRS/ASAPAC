@@ -33,10 +33,13 @@ const LoginPage: React.FC = () => {
       });
       
       console.log('Login realizado com sucesso!');
-      // Aqui você pode redirecionar para o dashboard
+      // Aqui redirecionaria para dashboard (quando existir)
+      alert('Login realizado com sucesso!');
       
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login');
+      // NUNCA reload - só mostra erro
+      setError(err.message || 'Email ou senha incorretos');
+      console.error('Erro de login:', err);
     }
   };
 
