@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.6b634900.css",
-    "main.js": "/static/js/main.dba4c341.js",
+    "main.css": "/static/css/main.ccf95932.css",
+    "main.js": "/static/js/main.ed398ec6.js",
     "static/media/logoasapac.png": "/static/media/logoasapac.4dc4c675cb95d7de26b4.png",
     "index.html": "/index.html",
-    "main.6b634900.css.map": "/static/css/main.6b634900.css.map",
-    "main.dba4c341.js.map": "/static/js/main.dba4c341.js.map"
+    "main.ccf95932.css.map": "/static/css/main.ccf95932.css.map",
+    "main.ed398ec6.js.map": "/static/js/main.ed398ec6.js.map"
   },
   "entrypoints": [
-    "static/css/main.6b634900.css",
-    "static/js/main.dba4c341.js"
+    "static/css/main.ccf95932.css",
+    "static/js/main.ed398ec6.js"
   ]
 }
