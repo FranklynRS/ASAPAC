@@ -32,7 +32,9 @@ const Button: React.FC<ButtonProps> = ({
       className={`button button--${variant} button--${size} ${loading ? 'button--loading' : ''} ${isDisabled ? 'button--disabled' : ''} ${className}`}
     >
       {loading ? (
-        <span className="button__spinner">⏳</span>
+        <span className="button__spinner">
+          <span className="spinner-circle"></span>
+        </span>
       ) : (
         children
       )}

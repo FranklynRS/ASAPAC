@@ -37,8 +37,8 @@ const LoginPage: React.FC = () => {
       alert('Login realizado com sucesso!');
       
     } catch (err: any) {
-      // NUNCA reload - só mostra erro
-      setError(err.message || 'Email ou senha incorretos');
+      // Mensagem padrão de site - sempre a mesma
+      setError('Usuário ou senha inválidos');
       console.error('Erro de login:', err);
     }
   };

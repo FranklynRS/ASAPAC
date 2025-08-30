@@ -38,8 +38,11 @@ const Input: React.FC<InputProps> = ({
           className="input-toggle"
           onClick={onTogglePassword}
           disabled={disabled}
+          aria-label={type === 'text' ? 'Ocultar senha' : 'Mostrar senha'}
         >
-          👁
+          <span className={`eye-icon ${type === 'password' ? 'eye-icon--hidden' : ''}`}>
+            {type === 'password' && <span className="strikethrough"></span>}
+          </span>
         </button>
       )}
       {error && (
