@@ -1,39 +1,59 @@
 @use '../../styles/variables' as *;
 
 .sidebar {
-  background: #f8f9fa;
+  background: $left-section-color;
   width: 240px;
   height: 100vh;
-  border-right: 1px solid #e9ecef;
-  padding: 24px 0;
+  padding: 0;
+  z-index: 999;
+  position: relative;
+  
+  &__logo {
+    padding: 16px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: -40px;
+    z-index: 999;
+  }
+  
+  &__logo-img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+  }
   
   &__nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 0 16px;
+    margin-top: -30px;
   }
   
   &__item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     padding: 16px 24px;
     background: none;
     border: none;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: all 0.2s ease;
-    color: #495057;
+    color: rgba(255, 255, 255, 0.8);
     
     &:hover {
-      background: rgba(0, 123, 255, 0.1);
-      color: #007bff;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
     }
     
     &--active {
-      background: rgba(0, 123, 255, 0.15);
-      color: #007bff;
-      border-right: 3px solid #007bff;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-right: 3px solid white;
     }
   }
   

@@ -1,23 +1,28 @@
 @use '../../styles/variables' as *;
 
 .header {
-  background: linear-gradient(135deg, #4a5568, #2d3748);
+  background: $left-section-color;
   color: white;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
   
   &__title {
-    font-size: 24px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
     font-weight: bold;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
   }
   
   &__user {
     font-size: 16px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
+    margin-left: auto;
   }
 }

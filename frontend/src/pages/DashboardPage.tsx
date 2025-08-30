@@ -1,16 +1,15 @@
 import React from 'react';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
-import './DashboardPage.scss';
 
 const DashboardPage: React.FC = () => {
   return (
-    <div className="dashboard-layout">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Header />
-      <div className="dashboard-content">
+      <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
-        <main className="dashboard-main">
-          {/* Conteúdo principal do dashboard virá aqui */}
+        <main style={{ flex: 1, padding: '24px', background: '#f8f9fa' }}>
+          <h2>Dashboard - Conteúdo principal aqui</h2>
         </main>
       </div>
     </div>
