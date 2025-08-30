@@ -1,0 +1,49 @@
+@use '../../styles/variables' as *;
+
+.sidebar {
+  background: #f8f9fa;
+  width: 240px;
+  height: 100vh;
+  border-right: 1px solid #e9ecef;
+  padding: 24px 0;
+  
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    color: #495057;
+    
+    &:hover {
+      background: rgba(0, 123, 255, 0.1);
+      color: #007bff;
+    }
+    
+    &--active {
+      background: rgba(0, 123, 255, 0.15);
+      color: #007bff;
+      border-right: 3px solid #007bff;
+    }
+  }
+  
+  &__icon {
+    font-size: 20px;
+    min-width: 20px;
+  }
+  
+  &__text {
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

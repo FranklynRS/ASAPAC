@@ -33,8 +33,6 @@ const LoginPage: React.FC = () => {
       });
       
       console.log('Login realizado com sucesso!');
-      // Aqui redirecionaria para dashboard (quando existir)
-      alert('Login realizado com sucesso!');
       
     } catch (err: any) {
       // Mensagem padrão de site - sempre a mesma
