@@ -13,16 +13,31 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   
   const { login, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     
-    if (!email || !password) {
-      setError('Por favor, preencha todos os campos');
+    setEmailError('');
+    setPasswordError('');
+
+    let hasError = false;
+
+    if (!email) {
+      setEmailError('Digite seu email');
+      hasError = true;
+    }
+
+    if (!password) {
+      setPasswordError('Digite sua senha');
+      hasError = true;
+    }
+
+    if (hasError) {
       return;
     }
 
@@ -35,8 +50,8 @@ const LoginPage: React.FC = () => {
       console.log('Login realizado com sucesso!');
       
     } catch (err: any) {
-      // Mensagem padrão de site - sempre a mesma
-      setError('Usuário ou senha inválidos');
+      setEmailError('Credenciais inválidas.');
+      setPasswordError('');
       console.error('Erro de login:', err);
     }
   };
@@ -51,13 +66,13 @@ const LoginPage: React.FC = () => {
         <Title variant="primary">Bem-vindo de volta!</Title>
         <Title variant="secondary">Faça login para continuar</Title>
         
-        {error && (
-          <div className="error-message" style={{color: 'red', marginBottom: '1rem'}}>
-            {error}
-          </div>
-        )}
-        
+        {/* Adicionei o fechamento da tag form aqui */}
         <form onSubmit={handleSubmit}>
+          {emailError && (
+            <div className="error-message" style={{color: 'red', marginBottom: '0.5rem'}}>
+              {emailError}
+            </div>
+          )}
           <Input
             type="email"
             placeholder="Digite seu email"
@@ -66,6 +81,11 @@ const LoginPage: React.FC = () => {
             disabled={isLoading}
           />
           
+          {passwordError && (
+            <div className="error-message" style={{color: 'red', marginBottom: '0.5rem'}}>
+              {passwordError}
+            </div>
+          )}
           <Input
             type={showPassword ? 'text' : 'password'}
             placeholder="Digite sua senha"
@@ -80,12 +100,11 @@ const LoginPage: React.FC = () => {
             type="submit" 
             variant="primary"
             loading={isLoading}
-            disabled={isLoading || !email || !password}
+            disabled={isLoading}
           >
             Entrar
           </Button>
         </form>
-        
         <Link>Esqueceu sua senha? Clique aqui!</Link>
       </RightSection>
     </Container>

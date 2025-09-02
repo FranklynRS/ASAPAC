@@ -1,6 +1,8 @@
 import React from 'react';
 import logoAsapac from '../../assets/logoasapac.png';
-import motocicletaIcon from '../../assets/motocicleta_icon.png';
+import mensageiroIcon from '../../assets/mensageiros_icon.png';
+import acertosIcon from '../../assets/acertos_icon.png';
+import mesesIcon from '../../assets/meses_icon.png';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.scss';
 
@@ -21,25 +23,24 @@ const Sidebar: React.FC = () => {
       </div>
       <nav className="sidebar__nav">
         <button className="sidebar__item">
-          <span className="sidebar__icon">📊</span>
-          <span className="sidebar__text">Lançar</span>
+          <img src={mesesIcon} alt="Mensageiros" className="sidebar__icon-img" />
+          <span className="sidebar__text">Meses</span>
         </button>
         
         <button className="sidebar__item">
-          <img src={motocicletaIcon} alt="Mensageiros" className="sidebar__icon-img" />
+          <img src={mensageiroIcon} alt="Mensageiros" className="sidebar__icon-img" />
           <span className="sidebar__text">Mensageiros</span>
         </button>
         
         <button className="sidebar__item">
-          <span className="sidebar__icon">❤️</span>
+          <img src={acertosIcon} alt="Mensageiros" className="sidebar__icon-img" />
           <span className="sidebar__text">Acertos</span>
         </button>
+      </nav>
         
         <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
-          <span className="sidebar__icon">🚪</span>
           <span className="sidebar__text">Logout</span>
         </button>
-      </nav>
     </aside>
   );
 };
