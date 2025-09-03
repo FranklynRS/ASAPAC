@@ -39,7 +39,7 @@ const Sidebar: React.FC = () => {
       </nav>
         
         <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
-          <span className="sidebar__text">Logout</span>
+          <span className="sidebar__text">Sair</span>
         </button>
     </aside>
   );

@@ -9,7 +9,7 @@ const DashboardPage: React.FC = () => {
       <div style={{ display: 'flex', flex: 1 }}>
         <Sidebar />
         <main style={{ flex: 1, padding: '24px', background: '#f8f9fa' }}>
-          <h2>Dashboard - Conteúdo principal aqui</h2>
+          <h2>DASHBOARD</h2>
         </main>
       </div>
     </div>

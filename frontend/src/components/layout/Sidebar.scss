@@ -38,6 +38,7 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 16px 24px;
     background: none;
     border: none;
@@ -59,8 +60,18 @@
     
     &--logout {
       position: absolute; 
-      left: 0;
-      width: 100%;      
+      bottom: 100px;
+      left: 20px;
+      width: 80%;
+      padding: 10px 20px;
+      border: 1px solid white;
+      border-radius: 20px;
+      display: block;
+      transition: all 0.2s ease;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      &:hover{
+        background-color: rgb(228, 63, 63);
+      }
     }
   }
   
