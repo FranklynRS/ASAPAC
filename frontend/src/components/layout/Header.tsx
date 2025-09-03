@@ -1,6 +1,7 @@
 import React from 'react';
 import './Header.scss';
 import { useAuth } from '../../contexts/AuthContext';
+import usuarioIcon from '../../assets/usuario.png'
 
 const Header: React.FC = () => {
   const { user } = useAuth();
@@ -10,7 +11,10 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="header__title">ASAPAC</div>
-      <div className="header__user">Olá, {userName}</div>
+      <div className="header__user">
+        <img src={usuarioIcon} alt="Ícone do usuário" className='header__user-icon' />
+        {userName}
+        </div>
     </header>
   );
 };
