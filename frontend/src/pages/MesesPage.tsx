@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './MesesPage.scss';
 import { MesesService } from '../services/mesesService';
+import refreshIcon from '../assets/refresh.png';
 
 interface Mes {
   id: number;
@@ -15,19 +16,22 @@ const MesesPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Mova a função para fora do useEffect
+  const fetchMeses = async () => {
+    setIsLoading(true);
+    try {
+      const data = await MesesService.fetchMesesComSaldos();
+      setMeses(data);
+      setError(null);
+    } catch (err) {
+      setError('Erro ao carregar os meses. Por favor, tente novamente.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMeses = async () => {
-      try {
-        // Altere para a nova função de serviço
-        const data = await MesesService.fetchMesesComSaldo();
-        setMeses(data);
-      } catch (err) {
-        setError('Erro ao carregar os meses. Por favor, tente novamente.');
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchMeses();
   }, []);
 
@@ -38,7 +42,6 @@ const MesesPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="meses-container">
-        <h2>Histórico dos Meses</h2>
         <div className="meses-content">
           <p>Carregando dados...</p>
         </div>
@@ -61,22 +64,29 @@ const MesesPage: React.FC = () => {
     <div className="meses-container">
       <h2 className="meses-header">Histórico dos Meses</h2>
       <div className="meses-content">
-        <input 
-          type="text" 
-          placeholder="Pesquisar mês" 
-          className="meses-search" 
-          value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="meses-search-bar">
+          <input 
+            type="text" 
+            placeholder="Pesquisar mês" 
+            className="meses-search" 
+            value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button className="meses-refresh-button" onClick={fetchMeses}>
+            <img src={refreshIcon} alt="Atualizar" />
+          </button>
+        </div>
         
         <div className="meses-table">
           {filteredMonths.map((month) => (
             <div key={month.id} className="meses-row">
               <span className="meses-row__name">{month.nome}</span>
-              <span className={`meses-row__value meses-row__value--${month.status}`}>
-                {month.status === 'positivo' ? '▲' : '▼'} R${Math.abs(month.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </span>
-              <button className="meses-row__button">Lançamentos</button>
+              <div className="meses-row__right">
+                <span className={`meses-row__value meses-row__value--${month.status}`}>
+                  {month.status === 'positivo' ? '▲' : '▼'} R${Math.abs(month.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </span>
+                <button className="meses-row__button">Lançamentos</button>
+              </div>
             </div>
           ))}
         </div>

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoAsapac from '../../assets/logoasapac.png';
 import mensageiroIcon from '../../assets/mensageiros_icon.png';
 import acertosIcon from '../../assets/acertos_icon.png';
 import mesesIcon from '../../assets/meses_icon.png';
+import mensageiroIconAlt from '../../assets/mensageiros_icon_alt.png';
+import acertosIconAlt from '../../assets/acertos_icon_alt.png';
+import mesesIconAlt from '../../assets/meses_icon_alt.png';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.scss';
 
@@ -13,6 +16,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
   const { logout } = useAuth();
+  const [activeItem, setActiveItem] = useState('Meses');
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -23,14 +27,26 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
     }
   };
 
+  const handleMenuClick = (item: string) => {
+    setActiveItem(item);
+    onMenuClick(item);
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar__logo">
         <img src={logoAsapac} alt="ASAPAC" className="sidebar__logo-img" />
       </div>
       <nav className="sidebar__nav">
-        <button className="sidebar__item" onClick={() => onMenuClick('Meses')}>
-          <img src={mesesIcon} alt="Meses" className="sidebar__icon-img" />
+        <button 
+          className={`sidebar__item ${activeItem === 'Meses' ? 'sidebar__item--active' : ''}`}
+          onClick={() => handleMenuClick('Meses')}
+        >
+          <img 
+            src={activeItem === 'Meses' ? mesesIconAlt : mesesIcon}
+            alt="Meses"
+            className="sidebar__icon-img"
+          />
           <span className="sidebar__text">Meses</span>
         </button>
         

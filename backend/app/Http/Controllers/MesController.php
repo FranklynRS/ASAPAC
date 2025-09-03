@@ -53,4 +53,20 @@ class MesController extends Controller
 
         return response()->json($mes);
     }
+
+    public function getMesesComSaldos()
+{
+    $meses = Mes::all()->map(function ($mes) {
+        $saldo = $mes->lancamentos()->sum('valor');
+        $status = $saldo >= 0 ? 'positivo' : 'negativo';
+        return [
+            'id_mes' => $mes->id_mes,
+            'ano_mes' => $mes->ano_mes,
+            'saldo' => $saldo,
+            'status' => $status
+        ];
+    });
+
+    return response()->json($meses);
+}
 }

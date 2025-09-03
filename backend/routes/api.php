@@ -25,7 +25,6 @@ Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
 Route::post('/usuarios', [UsuarioController::class, 'store']);
 Route::post('/usuarios/login', [UsuarioController::class, 'login']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
-Route::get('/usuarios', [UsuarioController::class, 'index']);
 
 // Lançamentos
 Route::apiResource('lancamentos', LancamentoController::class);
@@ -46,6 +45,9 @@ Route::get('/usuarios/me', [UsuarioController::class, 'me']);
 Route::post('/usuarios/logout', [UsuarioController::class, 'logout']);
 Route::post('/usuarios/refresh', [UsuarioController::class, 'refresh']);
 Route::get('/usuarios', [UsuarioController::class, 'index']);
+
+//Meses
+Route::get('/meses-com-saldos', [MesController::class, 'getMesesComSaldos']);
 
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
