@@ -17,7 +17,6 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
   const { logout } = useAuth();
   const [activeItem, setActiveItem] = useState('Meses');
-  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
@@ -50,13 +49,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
           <span className="sidebar__text">Meses</span>
         </button>
         
-        <button className="sidebar__item" onClick={() => onMenuClick('Mensageiros')}>
-          <img src={mensageiroIcon} alt="Mensageiros" className="sidebar__icon-img" />
+        <button 
+          className={`sidebar__item ${activeItem === 'Mensageiros' ? 'sidebar__item--active' : ''}`}
+          onClick={() => handleMenuClick('Mensageiros')}
+        >
+          <img
+            src={activeItem === 'Mensageiros' ? mensageiroIconAlt : mensageiroIcon}
+            alt="Mensageiros"
+            className="sidebar__icon-img"
+          />
           <span className="sidebar__text">Mensageiros</span>
         </button>
         
-        <button className="sidebar__item" onClick={() => onMenuClick('Acertos')}>
-          <img src={acertosIcon} alt="Acertos" className="sidebar__icon-img" />
+        <button
+          className={`sidebar__item ${activeItem === 'Acertos' ? 'sidebar__item--active' : ''}`}
+          onClick={() => handleMenuClick('Acertos')}
+        >
+          <img
+            src={activeItem === 'Acertos' ? acertosIconAlt : acertosIcon}
+            alt="Acertos"
+            className="sidebar__icon-img"
+          />
           <span className="sidebar__text">Acertos</span>
         </button>
       </nav>

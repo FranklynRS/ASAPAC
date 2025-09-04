@@ -31,8 +31,7 @@ Route::apiResource('lancamentos', LancamentoController::class);
 Route::put('/lancamentos', [LancamentoController::class, 'update']);
 
 // Meses
-Route::apiResource('meses', MesController::class)
-    ->except(['destroy']);
+
 
 //Relatorios
 Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
@@ -48,7 +47,9 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 
 //Meses
 Route::get('/meses-com-saldos', [MesController::class, 'getMesesComSaldos']);
-
+Route::apiResource('meses', MesController::class)
+    ->except(['destroy']);
+    
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 Route::get('/usuarios', [UsuarioController::class, 'index']);

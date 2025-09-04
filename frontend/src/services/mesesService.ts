@@ -8,6 +8,33 @@ interface MesComSaldo {
 }
 
 export const MesesService = {
+  async cadastrarMes(mesAno: string): Promise<void> {
+    try {
+      const token = AuthService.getToken();
+      if (!token) {
+        throw new Error('Token de autenticação não encontrado.');
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/api/meses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ "ano_mes": mesAno }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao cadastrar mês.');
+      }
+
+      console.log('Mês cadastrado com sucesso!');
+    } catch (err) {
+      console.error(err);
+      throw err; // ou trate o erro de outra forma
+    }
+  },
+
   async fetchMesesComSaldos(): Promise<MesComSaldo[]> {
     try {
       const token = AuthService.getToken();
@@ -29,7 +56,6 @@ export const MesesService = {
 
       const data = await response.json();
       
-      // Mapeia o nome do mês para exibir na tela
       const mesesDoAno = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
       return data.map((mes: any) => {

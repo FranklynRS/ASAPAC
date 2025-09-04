@@ -50,6 +50,13 @@
 .sidebar__item:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
+  border-radius: 8px;
+}
+
+.sidebar__item--active:hover {
+  background: rgb(190, 190, 190);
+  color: white;
+  border-radius: 8px;
 }
 
 .sidebar__item--active {
@@ -67,11 +74,11 @@
 .sidebar__item--logout {
   position: absolute;
   bottom: 100px;
-  left: 20px;
+  left: 23px;
   width: 80%;
   padding: 10px 20px;
   border: 1px solid white;
-  border-radius: 20px;
+  border-radius: 15px;
   display: block;
   transition: all 0.2s ease;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

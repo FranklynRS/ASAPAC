@@ -39,8 +39,23 @@
   font-size: 16px;
 }
 
+.btn-cadastrar-mes {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cadastrar-mes:hover {
+  background-color: #45a049;
+}
+
 .meses-refresh-button {
-  width: 44px;
+  width: 44px; 
   height: 44px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -85,7 +100,7 @@
 .meses-row__right {
   display: flex;
   align-items: center;
-  gap: 20px; // Espaçamento entre o valor e o botão
+  gap: 20px;
 }
 
 .meses-row__value {

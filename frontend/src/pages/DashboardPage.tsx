@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
-import MesesPage from './MesesPage'; // Importe a página de Meses
-import MensageirosPage from './MensageirosPage'; // Importe a página de Mensageiros
-import AcertosPage from './AcertosPage'; // Importe a página de Acertos
-
+import MesesPage from './MesesPage'; 
+import MensageirosPage from './MensageirosPage'; 
+import AcertosPage from './AcertosPage'; 
 const DashboardPage: React.FC = () => {
-  const [activePage, setActivePage] = useState('Meses'); // 'Meses' como padrão
+  const [activePage, setActivePage] = useState('Meses'); 
 
   const renderContent = () => {
     switch (activePage) {
@@ -17,7 +16,6 @@ const DashboardPage: React.FC = () => {
       case 'Acertos':
         return <AcertosPage />;
       default:
-        return <h2>Dashboard - Conteúdo principal aqui</h2>;
     }
   };
 

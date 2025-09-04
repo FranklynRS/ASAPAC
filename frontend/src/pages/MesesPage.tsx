@@ -15,8 +15,8 @@ const MesesPage: React.FC = () => {
   const [meses, setMeses] = useState<Mes[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newMonth, setNewMonth] = useState('');
 
-  // Mova a função para fora do useEffect
   const fetchMeses = async () => {
     setIsLoading(true);
     try {
@@ -30,6 +30,26 @@ const MesesPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+const handleCadastrarMes = async () => {
+    if (!newMonth) {
+      setError('Por favor, selecione um mês para cadastrar.');
+      return;
+    }
+    setIsLoading(true);
+    setError(''); // Limpa o erro anterior
+
+    try {
+      await MesesService.cadastrarMes(newMonth);
+      setNewMonth('');
+      await fetchMeses(); // Recarrega a lista
+    } catch (err) {
+      setError('Erro ao cadastrar mês. Verifique se o mês já existe.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+};
 
   useEffect(() => {
     fetchMeses();
@@ -62,7 +82,18 @@ const MesesPage: React.FC = () => {
   
   return (
     <div className="meses-container">
-      <h2 className="meses-header">Histórico dos Meses</h2>
+       <h2 className="meses-header ">Histórico dos Meses</h2>
+
+      <div className="cadastro-mes">
+        <input 
+          type="month" 
+          id="mes" 
+          name="mes"
+          value={newMonth}
+          onChange={(e) => setNewMonth(e.target.value)}
+        />
+        <button className="btn-cadastrar-mes" onClick={handleCadastrarMes}>Cadastrar Mês</button>
+      </div>
       <div className="meses-content">
         <div className="meses-search-bar">
           <input 
