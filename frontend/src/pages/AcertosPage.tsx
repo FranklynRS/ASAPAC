@@ -12,6 +12,7 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'Recebimentos' | 'Pagamentos' | 'Acertos' | 'Histórico'>('Histórico');
 
   useEffect(() => {
     if (idMes === null) return;
@@ -41,6 +42,15 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
   const saldoFinal = totalRecebido - totalPago;
 
+  let filteredLancamentos = lancamentos;
+  if (activeTab === 'Recebimentos') {
+    filteredLancamentos = lancamentos.filter(l => l.categoria.tipo === 1);
+  } else if (activeTab === 'Pagamentos') {
+    filteredLancamentos = lancamentos.filter(l => l.categoria.tipo === 0);
+  } else if (activeTab === 'Acertos') {
+    filteredLancamentos = lancamentos.filter(l => l.categoria.tipo === 2);
+  }
+
   if (isLoading) {
     return <div className="acertos-container">Carregando lançamentos...</div>;
   }
@@ -52,7 +62,7 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   return (
     <div className="acertos-container">
       <div className="acertos-header-info">
-        <button className="btn-voltar-acertos">Voltar</button>
+        <button className="btn-voltar-acertos" onClick={onVoltarClick}>Voltar</button>
         <h2>{mesNome}</h2>
       </div>
 
@@ -76,13 +86,34 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
       <div className="acertos-table-controls">
         <div className="acertos-tabs">
-          <button className="tab-button">Recebimentos</button>
-          <button className="tab-button">Pagamentos</button>
-          <button className="tab-button">Acertos</button>
-          <button className="tab-button tab-active">Histórico</button>
+          <button
+            className={`tab-button${activeTab === 'Recebimentos' ? ' tab-active' : ''}`}
+            onClick={() => setActiveTab('Recebimentos')}
+          >
+            Recebimentos
+          </button>
+          <button
+            className={`tab-button${activeTab === 'Pagamentos' ? ' tab-active' : ''}`}
+            onClick={() => setActiveTab('Pagamentos')}
+          >
+            Pagamentos
+          </button>
+          <button
+            className={`tab-button${activeTab === 'Acertos' ? ' tab-active' : ''}`}
+            onClick={() => setActiveTab('Acertos')}
+          >
+            Acertos
+          </button>
+          <button
+            className={`tab-button${activeTab === 'Histórico' ? ' tab-active' : ''}`}
+            onClick={() => setActiveTab('Histórico')}
+          >
+            Histórico
+          </button>
         </div>
         <button className="btn-novo-lancamento">Novo Lançamento</button>
       </div>
+
 
       <div className="acertos-table-wrapper">
         <table className="acertos-table">

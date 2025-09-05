@@ -31,7 +31,6 @@ const DashboardPage: React.FC = () => {
         }
         return <AcertosPage idMes={selectedMes.id} mesNome={selectedMes.nome} onVoltarClick={() => handleMenuClick('Meses')} />;
       default:
-        return <h2>Dashboard - Conteúdo principal aqui</h2>;
     }
   };
 
