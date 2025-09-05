@@ -7,11 +7,69 @@
   height: 100%;
 }
 
+.meses-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .meses-header {
   font-size: 24px;
   font-weight: 500;
   color: #404B9D;
-  margin-bottom: 20px;
+}
+
+.meses-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-abrir-cadastro {
+  background-color: #404B9D;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 44px; 
+
+  &:hover {
+    background-color: #868fd4;
+  }
+}
+
+.cadastro-mes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cadastro-mes input[type="month"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  height: 44px;
+}
+
+.btn-cadastrar-mes {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 44px;
+
+  &:hover {
+    background-color: #45a049;
+  }
 }
 
 .meses-content {
@@ -32,30 +90,15 @@
 }
 
 .meses-search {
-  flex: 1; 
+  flex: 1;
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
 }
 
-.btn-cadastrar-mes {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-cadastrar-mes:hover {
-  background-color: #45a049;
-}
-
 .meses-refresh-button {
-  width: 44px; 
+  width: 44px;
   height: 44px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -119,7 +162,7 @@
 }
 
 .meses-row__button {
-  background-color: #4CAF50;
+  background-color: #404B9D;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -129,7 +172,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #868fd4;
   }
 }
 
@@ -138,7 +181,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  
+
   svg {
     fill: #999;
     width: 32px;

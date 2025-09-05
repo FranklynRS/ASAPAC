@@ -10,7 +10,11 @@ interface Mes {
   status: 'positivo' | 'negativo';
 }
 
-const MesesPage: React.FC = () => {
+interface MesesPageProps {
+  onLancamentosClick: (mes: { id: number; nome: string }) => void;
+}
+
+const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [meses, setMeses] = useState<Mes[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,25 +35,25 @@ const MesesPage: React.FC = () => {
     }
   };
 
-const handleCadastrarMes = async () => {
+  const handleCadastrarMes = async () => {
     if (!newMonth) {
       setError('Por favor, selecione um mês para cadastrar.');
       return;
     }
     setIsLoading(true);
-    setError(''); // Limpa o erro anterior
+    setError('');
 
     try {
       await MesesService.cadastrarMes(newMonth);
       setNewMonth('');
-      await fetchMeses(); // Recarrega a lista
+      await fetchMeses();
     } catch (err) {
       setError('Erro ao cadastrar mês. Verifique se o mês já existe.');
       console.error(err);
     } finally {
       setIsLoading(false);
     }
-};
+  };
 
   useEffect(() => {
     fetchMeses();
@@ -62,6 +66,7 @@ const handleCadastrarMes = async () => {
   if (isLoading) {
     return (
       <div className="meses-container">
+        <h2 className="meses-header">Histórico dos Meses</h2>
         <div className="meses-content">
           <p>Carregando dados...</p>
         </div>
@@ -79,11 +84,10 @@ const handleCadastrarMes = async () => {
       </div>
     );
   }
-  
+
   return (
     <div className="meses-container">
-       <h2 className="meses-header ">Histórico dos Meses</h2>
-
+      <h2 className="meses-header">Histórico dos Meses</h2>
       <div className="cadastro-mes">
         <input 
           type="month" 
@@ -116,7 +120,9 @@ const handleCadastrarMes = async () => {
                 <span className={`meses-row__value meses-row__value--${month.status}`}>
                   {month.status === 'positivo' ? '▲' : '▼'} R${Math.abs(month.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
-                <button className="meses-row__button">Lançamentos</button>
+                <button className="meses-row__button" onClick={() => onLancamentosClick({ id: month.id, nome: month.nome })}>
+                  Lançamentos
+                </button>
               </div>
             </div>
           ))}

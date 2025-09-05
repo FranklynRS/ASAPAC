@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import logoAsapac from '../../assets/logoasapac.png';
 import mensageiroIcon from '../../assets/mensageiros_icon.png';
 import acertosIcon from '../../assets/acertos_icon.png';
@@ -12,12 +11,12 @@ import './Sidebar.scss';
 
 interface SidebarProps {
   onMenuClick: (page: string) => void;
+  activePage: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activePage }) => {
   const { logout } = useAuth();
-  const [activeItem, setActiveItem] = useState('Meses');
-
+  
   const handleLogout = async () => {
     try {
       await logout();
@@ -27,7 +26,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
   };
 
   const handleMenuClick = (item: string) => {
-    setActiveItem(item);
     onMenuClick(item);
   };
 
@@ -37,46 +35,46 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick }) => {
         <img src={logoAsapac} alt="ASAPAC" className="sidebar__logo-img" />
       </div>
       <nav className="sidebar__nav">
-        <button 
-          className={`sidebar__item ${activeItem === 'Meses' ? 'sidebar__item--active' : ''}`}
+        <button
+          className={`sidebar__item ${activePage === 'Meses' ? 'sidebar__item--active' : ''}`}
           onClick={() => handleMenuClick('Meses')}
         >
-          <img 
-            src={activeItem === 'Meses' ? mesesIconAlt : mesesIcon}
+          <img
+            src={activePage === 'Meses' ? mesesIconAlt : mesesIcon}
             alt="Meses"
             className="sidebar__icon-img"
           />
           <span className="sidebar__text">Meses</span>
         </button>
-        
-        <button 
-          className={`sidebar__item ${activeItem === 'Mensageiros' ? 'sidebar__item--active' : ''}`}
+
+        <button
+          className={`sidebar__item ${activePage === 'Mensageiros' ? 'sidebar__item--active' : ''}`}
           onClick={() => handleMenuClick('Mensageiros')}
         >
           <img
-            src={activeItem === 'Mensageiros' ? mensageiroIconAlt : mensageiroIcon}
+            src={activePage === 'Mensageiros' ? mensageiroIconAlt : mensageiroIcon}
             alt="Mensageiros"
             className="sidebar__icon-img"
           />
           <span className="sidebar__text">Mensageiros</span>
         </button>
-        
+
         <button
-          className={`sidebar__item ${activeItem === 'Acertos' ? 'sidebar__item--active' : ''}`}
+          className={`sidebar__item ${activePage === 'Acertos' ? 'sidebar__item--active' : ''}`}
           onClick={() => handleMenuClick('Acertos')}
         >
           <img
-            src={activeItem === 'Acertos' ? acertosIconAlt : acertosIcon}
+            src={activePage === 'Acertos' ? acertosIconAlt : acertosIcon}
             alt="Acertos"
             className="sidebar__icon-img"
           />
           <span className="sidebar__text">Acertos</span>
         </button>
       </nav>
-        
-        <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
-          <span className="sidebar__text">Sair</span>
-        </button>
+
+      <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
+        <span className="sidebar__text">Sair</span>
+      </button>
     </aside>
   );
 };

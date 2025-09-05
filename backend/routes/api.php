@@ -49,6 +49,8 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::get('/meses-com-saldos', [MesController::class, 'getMesesComSaldos']);
 Route::apiResource('meses', MesController::class)
     ->except(['destroy']);
+Route::get('/lancamentos/mes/{id_mes}', [LancamentoController::class, 'getByMes']);
+
     
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);

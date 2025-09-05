@@ -83,5 +83,22 @@ class LancamentoController extends Controller
 
         return response()->json(['message' => 'Lançamento excluído com sucesso']);
     }
+
+    public function getByMes($id_mes)
+    
+    {
+    try {
+        $lancamentos = Lancamento::where('id_mes', $id_mes)
+            ->with('categoria', 'usuario', 'mes')
+            ->get();
+
+    } catch (ModelNotFoundException $e) {
+        return response()->json(
+            ['erro' => 'Nenhum lançamento encontrado para este mês.'],
+            404
+        );
+    }
+    return response()->json($lancamentos);
+    }
 }
 
