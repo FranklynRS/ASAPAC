@@ -63,6 +63,11 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
     month.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleVoltarClick = () => {
+    setError(null); // Reseta o estado de erro
+    fetchMeses(); // Opcional: recarregar a lista
+  };
+
   if (isLoading) {
     return (
       <div className="meses-container">
@@ -77,9 +82,9 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   if (error) {
     return (
       <div className="meses-container">
-        <h2>Histórico dos Meses</h2>
-        <div className="meses-content">
+        <div className="meses-error-screen">
           <p className="error-message">{error}</p>
+          <button onClick={handleVoltarClick} className="btn-voltar">Voltar</button>
         </div>
       </div>
     );
@@ -87,31 +92,34 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
 
   return (
     <div className="meses-container">
-      <h2 className="meses-header">Histórico dos Meses</h2>
-      <div className="cadastro-mes">
-        <input 
-          type="month" 
-          id="mes" 
-          name="mes"
-          value={newMonth}
-          onChange={(e) => setNewMonth(e.target.value)}
-        />
-        <button className="btn-cadastrar-mes" onClick={handleCadastrarMes}>Cadastrar Mês</button>
-      </div>
-      <div className="meses-content">
-        <div className="meses-search-bar">
+      <div className="meses-controls-row">
+        <h2 className="meses-header">Histórico dos Meses</h2>
+        <div className="cadastro-mes-container">
           <input 
-            type="text" 
-            placeholder="Pesquisar mês" 
-            className="meses-search" 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)}
+            type="month" 
+            id="mes" 
+            name="mes"
+            value={newMonth}
+            onChange={(e) => setNewMonth(e.target.value)}
           />
-          <button className="meses-refresh-button" onClick={fetchMeses}>
-            <img src={refreshIcon} alt="Atualizar" />
-          </button>
+          <button className="btn-cadastrar-mes" onClick={handleCadastrarMes}>Cadastrar Mês</button>
         </div>
-        
+      </div>
+      
+      <div className="meses-search-bar-row">
+        <input 
+          type="text" 
+          placeholder="Pesquisar mês" 
+          className="meses-search" 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="meses-refresh-button" onClick={fetchMeses}>
+          <img src={refreshIcon} alt="Atualizar" />
+        </button>
+      </div>
+
+      <div className="meses-content">
         <div className="meses-table">
           {filteredMonths.map((month) => (
             <div key={month.id} className="meses-row">

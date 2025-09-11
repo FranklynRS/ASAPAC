@@ -12,8 +12,7 @@ use App\Http\Controllers\RelatorioController;
 
 // Mensageiros
 Route::get('mensageiros/ativos', [MensageiroController::class, 'getAtivos']);
-Route::apiResource('mensageiros', MensageiroController::class)
-    ->except(['destroy']);
+Route::apiResource('mensageiros', MensageiroController::class); // Alterado para apiResource completo
 
 // Categorias
 Route::get('/categorias', [CategoriaController::class, 'index']);
@@ -51,7 +50,6 @@ Route::apiResource('meses', MesController::class)
     ->except(['destroy']);
 Route::get('/lancamentos/mes/{id_mes}', [LancamentoController::class, 'getByMes']);
 
-    
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 Route::get('/usuarios', [UsuarioController::class, 'index']);

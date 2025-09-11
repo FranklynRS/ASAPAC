@@ -58,18 +58,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activePage }) => {
           />
           <span className="sidebar__text">Mensageiros</span>
         </button>
-
-        <button
-          className={`sidebar__item ${activePage === 'Acertos' ? 'sidebar__item--active' : ''}`}
-          onClick={() => handleMenuClick('Acertos')}
-        >
-          <img
-            src={activePage === 'Acertos' ? acertosIconAlt : acertosIcon}
-            alt="Acertos"
-            className="sidebar__icon-img"
-          />
-          <span className="sidebar__text">Acertos</span>
-        </button>
       </nav>
 
       <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
