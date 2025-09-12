@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AcertosPage.scss';
 import { AcertosService, Lancamento } from '../services/acertosService';
+import AcertosFormModal from '../pages/AcertosFormModal';
 
 interface AcertosPageProps {
   idMes: number;
@@ -13,22 +14,23 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'Recebimentos' | 'Pagamentos' | 'Acertos' | 'Histórico'>('Histórico');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchLancamentos = async () => {
+    setIsLoading(true);
+    try {
+      const data = await AcertosService.fetchLancamentosByMes(idMes);
+      setLancamentos(data);
+    } catch (err) {
+      setError('Erro ao carregar os lançamentos. Por favor, tente novamente.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (idMes === null) return;
-
-    const fetchLancamentos = async () => {
-      setIsLoading(true);
-      try {
-        const data = await AcertosService.fetchLancamentosByMes(idMes);
-        setLancamentos(data);
-      } catch (err) {
-        setError('Erro ao carregar os lançamentos. Por favor, tente novamente.');
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchLancamentos();
   }, [idMes]);
 
@@ -48,8 +50,22 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   } else if (activeTab === 'Pagamentos') {
     filteredLancamentos = lancamentos.filter(l => l.categoria.tipo === 0);
   } else if (activeTab === 'Acertos') {
-    filteredLancamentos = lancamentos.filter(l => l.categoria.tipo === 2);
+    // CORREÇÃO: Filtra por nome da categoria, pois o tipo 2 não existe.
+    filteredLancamentos = lancamentos.filter(l => l.categoria.nome_categoria.toLowerCase().includes('acerto'));
   }
+
+  const getButtonText = () => {
+    switch (activeTab) {
+      case 'Recebimentos':
+        return '+ Novo Recebimento';
+      case 'Pagamentos':
+        return '+ Novo Pagamento';
+      case 'Acertos':
+        return '+ Novo Acerto';
+      default:
+        return '+ Novo Lançamento';
+    }
+  };
 
   if (isLoading) {
     return <div className="acertos-container">Carregando lançamentos...</div>;
@@ -70,17 +86,17 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
         <div className="resumo-card recebido">
           <div className="icon">▲</div>
           <div className="text">Total Recebido</div>
-          <div className="valor">R$ {Number(totalRecebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+          <div className="valor">R$ {totalRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
         </div>
         <div className="resumo-card pago">
           <div className="icon">▼</div>
           <div className="text">Total Pago</div>
-          <div className="valor">R$ {Number(totalPago).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+          <div className="valor">R$ {totalPago.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
         </div>
         <div className="resumo-card saldo">
           <div className="icon">✓</div>
           <div className="text">Saldo Final</div>
-          <div className="valor">R$ {Number(saldoFinal).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+          <div className="valor">R$ {saldoFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
         </div>
       </div>
 
@@ -111,9 +127,8 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
             Histórico
           </button>
         </div>
-        <button className="btn-novo-lancamento">Novo Lançamento</button>
+        <button className="btn-novo-lancamento" onClick={() => setIsModalOpen(true)}>{getButtonText()}</button>
       </div>
-
 
       <div className="acertos-table-wrapper">
         <table className="acertos-table">
@@ -126,7 +141,7 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
             </tr>
           </thead>
           <tbody>
-            {lancamentos.map(lancamento => (
+            {filteredLancamentos.map(lancamento => (
               <tr key={lancamento.id_lancamento}>
                 <td>{lancamento.categoria.nome_categoria}</td>
                 <td>
@@ -141,6 +156,7 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
           </tbody>
         </table>
       </div>
+      <AcertosFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAcertoSaved={fetchLancamentos} />
     </div>
   );
 };
