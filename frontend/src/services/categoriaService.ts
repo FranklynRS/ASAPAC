@@ -3,7 +3,9 @@ import { AuthService } from './auth';
 export interface Categoria {
   id_categoria: number;
   nome_categoria: string;
-  descricao: string | null;
+  descricao?: string |null; // O ? torna o campo opcional
+  created_at: string; // Adicione este campo para a data de criação
+  created_by_user_name: string; // Adicione este campo para o nome do usuário
   tipo: 0 | 1;
 }
 
