@@ -158,7 +158,7 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
           </div>
 
           <div className="form-footer">
-            <p className="saldo-final">Saldo: **R$ {saldo.toFixed(2)}**</p>
+            <p className="saldo-final">Saldo: R$ {saldo.toFixed(2)}</p>
             <button type="submit" className="btn-gravar" disabled={isLoading}>
               {isLoading ? 'Salvando...' : 'Gravar'}
             </button>

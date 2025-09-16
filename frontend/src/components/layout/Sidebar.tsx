@@ -3,9 +3,11 @@ import logoAsapac from '../../assets/logoasapac.png';
 import mensageiroIcon from '../../assets/mensageiros_icon.png';
 import acertosIcon from '../../assets/acertos_icon.png';
 import mesesIcon from '../../assets/meses_icon.png';
+import categoriaIcon from '../../assets/categoria.png';
 import mensageiroIconAlt from '../../assets/mensageiros_icon_alt.png';
 import acertosIconAlt from '../../assets/acertos_icon_alt.png';
 import mesesIconAlt from '../../assets/meses_icon_alt.png';
+import categoriaIconAlt from '../../assets/categoria_alt.png';
 import { useAuth } from '../../contexts/AuthContext';
 import './Sidebar.scss';
 
@@ -57,6 +59,18 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activePage }) => {
             className="sidebar__icon-img"
           />
           <span className="sidebar__text">Mensageiros</span>
+        </button>
+
+        <button
+          className={`sidebar__item ${activePage === 'Categorias' ? 'sidebar__item--active' : ''}`}
+          onClick={() => handleMenuClick('Categorias')}
+        >
+          <img
+            src={activePage === 'Categorias' ? categoriaIconAlt : categoriaIcon}
+            alt="Categorias"
+            className="sidebar__icon-img"
+          />
+          <span className="sidebar__text">Categorias</span>
         </button>
       </nav>
 

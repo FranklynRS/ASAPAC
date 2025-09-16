@@ -4,6 +4,7 @@ import Sidebar from '../components/layout/Sidebar';
 import MesesPage from './MesesPage';
 import MensageirosPage from './MensageirosPage';
 import AcertosPage from './AcertosPage';
+import CategoriasPage from './CategoriasPage';
 
 const DashboardPage: React.FC = () => {
   const [activePage, setActivePage] = useState('Meses');
@@ -30,7 +31,10 @@ const DashboardPage: React.FC = () => {
           return <h2>Por favor, selecione um mês para ver os lançamentos.</h2>;
         }
         return <AcertosPage idMes={selectedMes.id} mesNome={selectedMes.nome} onVoltarClick={() => handleMenuClick('Meses')} />;
+      case 'Categorias':
+        return <CategoriasPage />;
       default:
+        return <h2>Dashboard - Conteúdo principal aqui</h2>;
     }
   };
 
