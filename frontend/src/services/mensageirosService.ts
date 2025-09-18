@@ -5,6 +5,8 @@ export interface Mensageiro {
   nome_mensageiro: string;
   codigo_mensageiro: string;
   telefone: string;
+  status: boolean;
+  created_at: string;
 }
 
 export const MensageirosService = {

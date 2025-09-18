@@ -46,7 +46,7 @@ class MensageiroController extends Controller
             'nome_mensageiro' => 'required|string|max:255',
             'telefone' => 'required|string|max:255',
             'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro,' . $mensageiro->id_mensageiro . ',id_mensageiro',
-            'status' => 'required|boolean',
+            'status' => 'boolean',
         ]);
 
         if ($validator->fails()) {

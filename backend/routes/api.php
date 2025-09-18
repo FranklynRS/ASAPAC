@@ -12,7 +12,7 @@ use App\Http\Controllers\RelatorioController;
 
 // Mensageiros
 Route::get('mensageiros/ativos', [MensageiroController::class, 'getAtivos']);
-Route::apiResource('mensageiros', MensageiroController::class); // Alterado para apiResource completo
+Route::apiResource('mensageiros', MensageiroController::class); 
 
 // Categorias
 Route::get('/categorias', [CategoriaController::class, 'index']);

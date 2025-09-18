@@ -56,13 +56,13 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   const getButtonText = () => {
     switch (activeTab) {
       case 'Recebimentos':
-        return '+ Novo Recebimento';
+        return 'Novo Recebimento';
       case 'Pagamentos':
-        return '+ Novo Pagamento';
+        return 'Novo Pagamento';
       case 'Acertos':
-        return '+ Novo Acerto';
+        return 'Novo Acerto';
       default:
-        return '+ Novo Lançamento';
+        return 'Novo Lançamento';
     }
   };
 

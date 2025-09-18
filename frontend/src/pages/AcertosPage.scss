@@ -74,14 +74,18 @@
 .tab-button {
   padding: 10px 15px;
   border: none;
-  background-color: #ccc;
+  background-color: #404B9D;
   color: #fff;
   border-radius: 8px 8px 0 0;
   cursor: pointer;
+  
+  &:hover {
+    background-color: #0c1a81;
+    }
 }
 
 .tab-button.tab-active {
-  background-color: #404B9D;
+  background-color: #0c1a81;
 }
 
 .btn-novo-lancamento {
@@ -103,6 +107,7 @@
 .acertos-table {
   width: 100%;
   border-collapse: collapse;
+
 }
 
 .acertos-table th, .acertos-table td {
@@ -111,9 +116,9 @@
 }
 
 .acertos-table th {
-  background-color: #f7f7f7;
+  background-color: #404B9D;
   font-weight: 500;
-  color: #666;
+  color: #fff;
 }
 
 .acertos-table tbody tr {
