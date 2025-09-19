@@ -31,10 +31,8 @@ Route::put('/lancamentos', [LancamentoController::class, 'update']);
 
 // Meses
 
-
 //Relatorios
 Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
-Route::apiResource('acertos', AcertoController::class);
 
 Route::middleware('jwt.auth')->group(function () {
 
@@ -49,6 +47,10 @@ Route::get('/meses-com-saldos', [MesController::class, 'getMesesComSaldos']);
 Route::apiResource('meses', MesController::class)
     ->except(['destroy']);
 Route::get('/lancamentos/mes/{id_mes}', [LancamentoController::class, 'getByMes']);
+
+//Acertos
+Route::get('/acertos/mes/{idMes}', [AcertoController::class, 'getAcertosByMes']);
+Route::apiResource('acertos', AcertoController::class);
 
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);

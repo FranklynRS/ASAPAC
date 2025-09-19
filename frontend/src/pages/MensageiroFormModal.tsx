@@ -79,6 +79,7 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
           <label htmlFor="codigo">Código:</label>
           <InputMask
             mask="9999"
+            placeholder="Ex.:0001"
             value={codigo}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCodigo(e.target.value)}
             required
@@ -99,6 +100,7 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
           <label htmlFor="telefone">Telefone:</label>
           <InputMask
             mask="(99) 99999-9999"
+            placeholder="Ex.:(33) 99912-4569"
             value={telefone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTelefone(e.target.value)}
             required

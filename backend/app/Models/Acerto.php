@@ -22,6 +22,7 @@ class Acerto extends Model
         'gasolina',
         'alimentacao',
         'outros',
+        'mes_id',
     ];
 
     /* Define a relação: um Acerto pertence a um Mensageiro.*/

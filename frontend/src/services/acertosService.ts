@@ -24,9 +24,31 @@ export interface AcertoData {
   id_mensageiro: number;
   valor_recebido: number;
   pagamento: number;
-  // A lógica de categorias será tratada no frontend
-  categorias: Array<{ id_categoria: number; valor: number }>;
+  gasolina: number;
+  hotel: number;
+  alimentacao: number;
+  outros: number;
 }
+
+export interface Acerto {
+  id_acerto: number;
+  nome_mensageiro: string;
+  valor_recebido: number;
+  pagamento: number;
+  gasolina: number;
+  hotel: number;
+  alimentacao: number;
+  outros: number;
+}
+
+export interface LancamentoData {
+    valor: number;
+    descricao: string;
+    tipo: 0 | 1;
+    id_mes: number;
+    id_usuario: number;
+}
+
 
 export const AcertosService = {
   async fetchMensageiros(): Promise<Mensageiro[]> {
@@ -80,6 +102,27 @@ export const AcertosService = {
     }
   },
 
+  async fetchAcertosByMes(idMes: number): Promise<Acerto[]> {
+      try {
+          const token = AuthService.getToken();
+          if (!token) throw new Error('Token de autenticação não encontrado.');
+          const response = await fetch(`http://127.0.0.1:8000/api/acertos/mes/${idMes}`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+              },
+          });
+
+          if (!response.ok) throw new Error('Falha ao buscar os acertos.');
+          return await response.json();
+      } catch (error) {
+          console.error('Erro ao buscar acertos:', error);
+          throw error;
+      }
+  },
+
+
   async createAcerto(acertosData: AcertoData): Promise<any> {
     try {
       const token = AuthService.getToken();
@@ -97,6 +140,26 @@ export const AcertosService = {
     } catch (error) {
       console.error('Erro ao registrar acerto:', error);
       throw error;
+    }
+  },
+
+  async createLancamento(lancamentoData: LancamentoData): Promise<any> {
+    try {
+        const token = AuthService.getToken();
+        if (!token) throw new Error('Token de autenticação não encontrado.');
+        const response = await fetch('http://127.0.0.1:8000/api/lancamentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(lancamentoData),
+        });
+        if (!response.ok) throw new Error('Falha ao registrar lançamento.');
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao registrar lançamento:', error);
+        throw error;
     }
   },
 };

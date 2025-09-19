@@ -34,9 +34,6 @@ const MensageiroDetailsModal: React.FC<MensageiroDetailsModalProps> = ({ isOpen,
         <p><strong>Status:</strong> {statusText}</p>
         <p><strong>Criado em:</strong> {formattedCreatedAt}</p>
       </div>
-      <div className="modal-actions">
-        <button onClick={onClose} className="btn-close">Fechar</button>
-      </div>
     </Modal>
   );
 };

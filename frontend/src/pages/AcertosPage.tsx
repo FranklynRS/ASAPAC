@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './AcertosPage.scss';
-import { AcertosService, Lancamento } from '../services/acertosService';
-import AcertosFormModal from '../pages/AcertosFormModal';
+import { AcertosService, Lancamento, Acerto } from '../services/acertosService';
+import AcertosFormModal from './AcertosFormModal';
+import AcertosDetailsModal from './AcertosDetailsModal';
+import LancamentoFormModal from './LancamentoFormModal'; // Adicione esta importação
+import editarIcon from '../assets/editar.png';
+import excluirIcon from '../assets/excluir.png';
+import refreshIcon from '../assets/refresh.png';
 
 interface AcertosPageProps {
   idMes: number;
@@ -11,10 +16,14 @@ interface AcertosPageProps {
 
 const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick }) => {
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
+  const [acertos, setAcertos] = useState<Acerto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'Recebimentos' | 'Pagamentos' | 'Acertos' | 'Histórico'>('Histórico');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedAcerto, setSelectedAcerto] = useState<Acerto | null>(null);
+  const [isLancamentoModalOpen, setIsLancamentoModalOpen] = useState(false); // Novo estado
 
   const fetchLancamentos = async () => {
     setIsLoading(true);
@@ -29,10 +38,38 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
     }
   };
 
+  const fetchAcertos = async () => {
+    setIsLoading(true);
+    try {
+      const data = await AcertosService.fetchAcertosByMes(idMes);
+      setAcertos(data);
+    } catch (err) {
+      setError('Erro ao carregar os acertos. Por favor, tente novamente.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenDetailsModal = (acerto: Acerto) => {
+    setSelectedAcerto(acerto);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedAcerto(null);
+  };
+
   useEffect(() => {
     if (idMes === null) return;
-    fetchLancamentos();
-  }, [idMes]);
+    
+    if (activeTab === 'Acertos') {
+        fetchAcertos();
+    } else {
+        fetchLancamentos();
+    }
+  }, [idMes, activeTab]);
 
   const totalRecebido = lancamentos
     .filter(l => l.categoria.tipo === 1)
@@ -52,19 +89,6 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   } else if (activeTab === 'Acertos') {
     filteredLancamentos = lancamentos.filter(l => l.categoria.nome_categoria.toLowerCase().includes('acerto'));
   }
-
-  const getButtonText = () => {
-    switch (activeTab) {
-      case 'Recebimentos':
-        return 'Novo Recebimento';
-      case 'Pagamentos':
-        return 'Novo Pagamento';
-      case 'Acertos':
-        return 'Novo Acerto';
-      default:
-        return 'Novo Lançamento';
-    }
-  };
 
   if (isLoading) {
     return <div className="acertos-container">Carregando lançamentos...</div>;
@@ -126,36 +150,89 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
             Histórico
           </button>
         </div>
-        <button className="btn-novo-lancamento" onClick={() => setIsModalOpen(true)}>{getButtonText()}</button>
+        <div className="botoes-acao">
+          <button className="btn-novo-lancamento" onClick={() => setIsLancamentoModalOpen(true)}>Novo Lançamento</button>
+          <button className="btn-novo-lancamento" onClick={() => setIsFormModalOpen(true)}>Novo Acerto</button>
+        </div>
       </div>
 
       <div className="acertos-table-wrapper">
-        <table className="acertos-table">
-          <thead>
-            <tr>
-              <th>Modalidade</th>
-              <th>Valor</th>
-              <th>Descrição</th>
-              <th>Opções</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLancamentos.map(lancamento => (
-              <tr key={lancamento.id_lancamento}>
-                <td>{lancamento.categoria.nome_categoria}</td>
-                <td>
-                  <span className={`lancamento-valor valor--${lancamento.categoria.tipo === 1 ? 'recebido' : 'pago'}`}>
-                    {lancamento.categoria.tipo === 1 ? '+' : '-'} R$ {Math.abs(lancamento.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                </td>
-                <td>{lancamento.descricao}</td>
-                <td><button className="btn-detalhes">Detalhes</button></td>
+        {activeTab === 'Acertos' ? (
+          <table className="acertos-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Recebimento</th>
+                <th>Pagamento</th>
+                <th>Detalhes</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {acertos.map(acerto => (
+                <tr key={acerto.id_acerto}>
+                  <td>{acerto.nome_mensageiro}</td>
+                  <td>R$ {Number(acerto.valor_recebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                  <td>R$ {Number(acerto.pagamento).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                  <td>
+                    <button className="btn-detalhes" onClick={() => handleOpenDetailsModal(acerto)}>Detalhes</button>
+                  </td>
+                  <td className="acao-buttons">
+                    <button className="btn-editar">
+                      <img src={editarIcon} alt="Editar" />
+                    </button>
+                    <button className="btn-excluir">
+                      <img src={excluirIcon} alt="Excluir" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <table className="acertos-table">
+            <thead>
+              <tr>
+                <th>Modalidade</th>
+                <th>Valor</th>
+                <th>Descrição</th>
+                <th>Opções</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredLancamentos.map(lancamento => (
+                <tr key={lancamento.id_lancamento}>
+                  <td>{lancamento.categoria.nome_categoria}</td>
+                  <td>
+                    <span className={`lancamento-valor valor--${lancamento.categoria.tipo === 1 ? 'recebido' : 'pago'}`}>
+                      {lancamento.categoria.tipo === 1 ? '+' : '-'} R$ {Math.abs(lancamento.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
+                  </td>
+                  <td>{lancamento.descricao}</td>
+                  <td><button className="btn-detalhes">Detalhes</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-      <AcertosFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAcertoSaved={fetchLancamentos} />
+      <AcertosFormModal 
+        isOpen={isFormModalOpen} 
+        onClose={() => setIsFormModalOpen(false)} 
+        onAcertoSaved={fetchAcertos} 
+        idMes={idMes} 
+      />
+      <AcertosDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={handleCloseDetailsModal}
+        acerto={selectedAcerto}
+      />
+      <LancamentoFormModal
+        isOpen={isLancamentoModalOpen}
+        onClose={() => setIsLancamentoModalOpen(false)}
+        onLancamentoSaved={fetchLancamentos}
+        idMes={idMes}
+      />
     </div>
   );
 };

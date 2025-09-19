@@ -105,4 +105,22 @@ export class AuthService {
     const user = this.getCurrentUser();
     return !!(token && user);
   }
+
+  static getUserIdFromToken(): number | null {
+    try {
+      const token = this.getToken();
+      if (!token) {
+        return null;
+      }
+
+      const payloadBase64 = token.split('.')[1];
+      const decodedPayload = atob(payloadBase64);
+      const payload = JSON.parse(decodedPayload);
+
+      return payload.sub || null;
+    } catch (e) {
+      console.error("Erro ao decodificar token:", e);
+      return null;
+    }
+  }
 }

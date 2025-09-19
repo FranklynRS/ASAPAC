@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class AcertoController extends Controller
 {
-
     public function index()
     {
         $acertos = Acerto::with(['mensageiro'])->get();
@@ -30,7 +29,6 @@ class AcertoController extends Controller
 
     public function update(Request $request, Acerto $acerto)
     {
-        // Passamos 'true' para obter as regras de atualização (com 'sometimes').
         $validatedData = $request->validate($this->getValidationRules(true));
 
         $acerto->update($validatedData);
@@ -40,7 +38,6 @@ class AcertoController extends Controller
 
     public function destroy($id)
     {
-
         $acerto = Acerto::findOrFail($id);
         $acerto->delete();
 
@@ -49,7 +46,6 @@ class AcertoController extends Controller
 
     private function getValidationRules(bool $isUpdate = false): array
     {
-
         $rule = $isUpdate ? 'sometimes' : 'required';
 
         return [
@@ -58,8 +54,35 @@ class AcertoController extends Controller
             'valor_recebido' => [$rule, 'numeric', 'min:0'],
             'pagamento' => [$rule, 'numeric', 'min:0'],
             'gasolina' => [$rule, 'numeric', 'min:0'],
+            'hotel' => [$rule, 'numeric', 'min:0'],
             'alimentacao' => [$rule, 'numeric', 'min:0'],
             'outros' => [$rule, 'numeric', 'min:0'],
+            'mes_id' => [$rule, 'integer', 'exists:meses,id_mes'],
         ];
+    }
+
+    public function getAcertosByMes($idMes)
+    {
+        $acertos = Acerto::with('mensageiro')
+                         ->where('mes_id', $idMes)
+                         ->get()
+                         ->filter(function($acerto) {
+                             return $acerto->mensageiro !== null;
+                         });
+
+        $dadosTabela = $acertos->map(function($acerto) {
+            return [
+                'id_acerto' => $acerto->id_acerto,
+                'nome_mensageiro' => $acerto->mensageiro->nome_mensageiro,
+                'valor_recebido' => $acerto->valor_recebido,
+                'pagamento' => $acerto->pagamento,
+                'gasolina' => $acerto->gasolina,
+                'hotel' => $acerto->hotel,
+                'alimentacao' => $acerto->alimentacao,
+                'outros' => $acerto->outros,
+            ];
+        })->values();
+
+        return response()->json($dadosTabela);
     }
 }
