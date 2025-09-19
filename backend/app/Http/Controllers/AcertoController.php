@@ -16,9 +16,7 @@ class AcertoController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate($this->getValidationRules());
-
         $acerto = Acerto::create($validatedData);
-
         return response()->json($acerto->load(['mensageiro']), 201);
     }
 
@@ -30,9 +28,7 @@ class AcertoController extends Controller
     public function update(Request $request, Acerto $acerto)
     {
         $validatedData = $request->validate($this->getValidationRules(true));
-
         $acerto->update($validatedData);
-
         return response()->json($acerto->load(['mensageiro']));
     }
 
@@ -40,14 +36,12 @@ class AcertoController extends Controller
     {
         $acerto = Acerto::findOrFail($id);
         $acerto->delete();
-
         return response()->json(['message' => 'Acerto excluído com sucesso']);
     }
 
     private function getValidationRules(bool $isUpdate = false): array
     {
         $rule = $isUpdate ? 'sometimes' : 'required';
-
         return [
             'id_usuario' => [$rule, 'integer', 'exists:usuarios,id_usuario'],
             'id_mensageiro' => [$rule, 'integer', 'exists:mensageiros,id_mensageiro'],
@@ -64,25 +58,26 @@ class AcertoController extends Controller
     public function getAcertosByMes($idMes)
     {
         $acertos = Acerto::with('mensageiro')
-                         ->where('mes_id', $idMes)
-                         ->get()
-                         ->filter(function($acerto) {
-                             return $acerto->mensageiro !== null;
-                         });
+            ->where('mes_id', $idMes)
+            ->get()
+            ->filter(function($acerto) {
+                return $acerto->mensageiro !== null;
+            });
 
-        $dadosTabela = $acertos->map(function($acerto) {
+        // Mapeia os acertos para garantir que todos os valores sejam floats
+        $dadosFormatados = $acertos->map(function($acerto) {
             return [
-                'id_acerto' => $acerto->id_acerto,
+                'id_acerto' => (int) $acerto->id_acerto,
                 'nome_mensageiro' => $acerto->mensageiro->nome_mensageiro,
-                'valor_recebido' => $acerto->valor_recebido,
-                'pagamento' => $acerto->pagamento,
-                'gasolina' => $acerto->gasolina,
-                'hotel' => $acerto->hotel,
-                'alimentacao' => $acerto->alimentacao,
-                'outros' => $acerto->outros,
+                'valor_recebido' => (float) $acerto->valor_recebido,
+                'pagamento' => (float) $acerto->pagamento,
+                'gasolina' => (float) $acerto->gasolina,
+                'hotel' => (float) $acerto->hotel,
+                'alimentacao' => (float) $acerto->alimentacao,
+                'outros' => (float) $acerto->outros,
             ];
         })->values();
 
-        return response()->json($dadosTabela);
+        return response()->json($dadosFormatados);
     }
 }

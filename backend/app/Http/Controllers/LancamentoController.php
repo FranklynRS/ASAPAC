@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lancamento;
-use App\Models\Categoria; // Importe o model de Categoria
+use App\Models\Categoria;
+use App\Models\Acerto; // Adicione o modelo de Acerto
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Controllers\AcertoController;
 
 class LancamentoController extends Controller
 {
@@ -18,30 +20,24 @@ class LancamentoController extends Controller
 
     public function store(Request $request)
     {
-        // Regras de validação para o novo tipo de lançamento
+        $valor = str_replace(',', '.', $request->valor);
+        $request->merge(['valor' => $valor]);
+
         $validated = $request->validate([
             'descricao' => 'required|string|max:255',
             'valor' => 'required|numeric',
             'id_mes' => 'required|integer|exists:meses,id_mes',
             'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
-            'tipo' => 'required|integer|in:0,1', // 0 para Pagamento, 1 para Recebimento
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
         ]);
 
-        // Encontra ou cria a categoria 'Recebimentos' ou 'Pagamentos'
-        $categoriaNome = $validated['tipo'] === 1 ? 'Recebimentos' : 'Pagamentos';
-        $categoria = Categoria::firstOrCreate(
-            ['nome_categoria' => $categoriaNome],
-            ['tipo' => $validated['tipo']]
-        );
-
-        // Cria o novo lançamento com base nos dados do request e na categoria encontrada
         $lancamento = Lancamento::create([
             'descricao' => $validated['descricao'],
             'valor' => $validated['valor'],
             'id_mes' => $validated['id_mes'],
             'id_usuario' => $validated['id_usuario'],
-            'id_categoria' => $categoria->id_categoria, // Usa o ID da categoria
-            'data_lancamento' => now(), // Define a data de hoje automaticamente
+            'id_categoria' => $validated['id_categoria'],
+            'data_lancamento' => now(),
         ]);
         
         return response()->json($lancamento->load(['categoria']), 201);
@@ -51,12 +47,8 @@ class LancamentoController extends Controller
     {
         try {
             $lancamento = Lancamento::findOrFail($id);
-
         } catch (ModelNotFoundException $e) {
-            return response()->json(
-                ['erro' => 'Lançamento não encontrado.'],
-                404
-            );
+            return response()->json(['erro' => 'Lançamento não encontrado.'], 404);
         }
 
         return response()->json($lancamento);
@@ -66,12 +58,8 @@ class LancamentoController extends Controller
     {
         try {
             $lancamento = Lancamento::findOrFail($id);
-
         } catch (ModelNotFoundException $e) {
-            return response()->json(
-                ['erro' => 'Lançamento não encontrado.'], 
-                404
-            );
+            return response()->json(['erro' => 'Lançamento não encontrado.'], 404);
         }
 
         $validated = $request->validate([
@@ -98,19 +86,79 @@ class LancamentoController extends Controller
     }
 
     public function getByMes($id_mes)
-    
     {
         try {
             $lancamentos = Lancamento::where('id_mes', $id_mes)
                 ->with('categoria', 'usuario', 'mes')
                 ->get();
-
         } catch (ModelNotFoundException $e) {
-            return response()->json(
-                ['erro' => 'Nenhum lançamento encontrado para este mês.'],
-                404
-            );
+            return response()->json(['erro' => 'Nenhum lançamento encontrado para este mês.'], 404);
         }
-        return response()->json($lancamentos);
+
+        $dadosFormatados = $lancamentos->map(function($lancamento) {
+            return [
+                'id_lancamento' => 'lancamento_' . $lancamento->id_lancamento,
+                'descricao' => $lancamento->descricao,
+                'valor' => (float) $lancamento->valor,
+                'categoria' => $lancamento->categoria,
+            ];
+        });
+
+        return response()->json($dadosFormatados);
+    }
+
+    public function getCombinedByMes($idMes)
+    {
+        $lancamentos = Lancamento::where('id_mes', $idMes)
+            ->with('categoria')
+            ->get()
+            ->map(function ($lancamento) {
+                return [
+                    'id_lancamento' => 'lancamento_' . $lancamento->id_lancamento,
+                    'descricao' => $lancamento->descricao,
+                    'valor' => (float) $lancamento->valor,
+                    'categoria' => $lancamento->categoria,
+                ];
+            });
+
+        $acertos = Acerto::with('mensageiro')
+            ->where('mes_id', $idMes)
+            ->get();
+            
+        $acertosFormatados = $acertos->flatMap(function($acerto) {
+            $items = [];
+            
+            if ((float) $acerto->valor_recebido > 0) {
+                $items[] = [
+                    'id_lancamento' => 'acerto_recebido_' . $acerto->id_acerto,
+                    'descricao' => 'Acerto de Recebimento do ' . $acerto->mensageiro->nome_mensageiro,
+                    'valor' => (float) $acerto->valor_recebido,
+                    'categoria' => [
+                        'id_categoria' => null,
+                        'nome_categoria' => 'Acerto Recebimento',
+                        'tipo' => 1,
+                    ],
+                ];
+            }
+
+            $totalPagamentosAcerto = (float) $acerto->pagamento + (float) $acerto->gasolina + (float) $acerto->hotel + (float) $acerto->alimentacao + (float) $acerto->outros;
+            if ($totalPagamentosAcerto > 0) {
+                $items[] = [
+                    'id_lancamento' => 'acerto_pagamento_' . $acerto->id_acerto,
+                    'descricao' => 'Acerto de Despesas do ' . $acerto->mensageiro->nome_mensageiro,
+                    'valor' => $totalPagamentosAcerto,
+                    'categoria' => [
+                        'id_categoria' => null,
+                        'nome_categoria' => 'Acerto Pagamento',
+                        'tipo' => 0,
+                    ],
+                ];
+            }
+
+            return $items;
+        });
+
+        $combinado = $lancamentos->merge($acertosFormatados);
+        return response()->json($combinado);
     }
 }

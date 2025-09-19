@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import './AcertosFormModal.scss';
-import { AcertosService, Mensageiro, AcertoData } from '../services/acertosService';
+import './AcertoEditModal.scss'; // Crie este arquivo SCSS
+import { AcertosService, Acerto, Mensageiro } from '../services/acertosService';
 import { AuthService } from '../services/auth';
 
-interface AcertosFormModalProps {
+interface AcertoEditModalProps {
   isOpen: boolean;
   onClose: () => void;
+  acerto: Acerto | null;
   onAcertoSaved: () => void;
-  idMes: number;
 }
 
-const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, onAcertoSaved, idMes }) => {
+const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acerto, onAcertoSaved }) => {
   const [mensageiros, setMensageiros] = useState<Mensageiro[]>([]);
   const [selectedMensageiroId, setSelectedMensageiroId] = useState<number | null>(null);
   const [valorRecebido, setValorRecebido] = useState<number>(0);
@@ -24,7 +24,15 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && acerto) {
+      // Pré-preenche o formulário com os dados do acerto
+      setValorRecebido(acerto.valor_recebido);
+      setPagamento(acerto.pagamento);
+      setGasolina(acerto.gasolina);
+      setHotel(acerto.hotel);
+      setAlimentacao(acerto.alimentacao);
+      setOutros(acerto.outros);
+
       const fetchData = async () => {
         try {
           const fetchedMensageiros = await AcertosService.fetchMensageiros();
@@ -36,7 +44,7 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
       };
       fetchData();
     }
-  }, [isOpen]);
+  }, [isOpen, acerto]);
 
   useEffect(() => {
     const totalDespesas = gasolina + hotel + alimentacao + outros;
@@ -47,33 +55,25 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    if (!selectedMensageiroId) {
-      setError('Por favor, selecione um mensageiro.');
+    if (!acerto) {
+      setError('Acerto inválido.');
       setIsLoading(false);
       return;
     }
     
-    const id_usuario = AuthService.getUserIdFromToken();
-    if (!id_usuario) {
-      setError('Erro de autenticação: ID do usuário não encontrado.');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const acertosData: AcertoData = {
-        id_mensageiro: selectedMensageiroId,
+      const acertosData = {
+        id_mensageiro: selectedMensageiroId || acerto.id_mensageiro,
         valor_recebido: valorRecebido,
         pagamento: pagamento,
         gasolina: gasolina,
         hotel: hotel,
         alimentacao: alimentacao,
         outros: outros,
-        id_usuario: id_usuario,
-        id_mes: idMes,
+        // O ID do usuário e do mês serão tratados no back-end
       };
       
-      await AcertosService.createAcerto(acertosData);
+      await AcertosService.updateAcerto(acerto.id_acerto, acertosData);
       onAcertoSaved();
       onClose();
     } catch (err) {
@@ -84,20 +84,22 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !acerto) {
+    return null;
+  }
 
   return (
     <div className="modal-overlay">
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onClose}>&times;</button>
-        <h2 className="modal-title">Realizar Acerto</h2>
+        <h2 className="modal-title">Editar Acerto</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
               <label>Selecionar Mensageiro</label>
               <select
-                value={selectedMensageiroId || ''}
+                value={selectedMensageiroId || acerto.id_mensageiro || ''}
                 onChange={e => setSelectedMensageiroId(Number(e.target.value))}
                 required
               >
@@ -151,4 +153,4 @@ const AcertosFormModal: React.FC<AcertosFormModalProps> = ({ isOpen, onClose, on
   );
 };
 
-export default AcertosFormModal;
+export default AcertoEditModal;

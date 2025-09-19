@@ -26,8 +26,6 @@ Route::post('/usuarios/login', [UsuarioController::class, 'login']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 
 // Lançamentos
-Route::apiResource('lancamentos', LancamentoController::class);
-Route::put('/lancamentos', [LancamentoController::class, 'update']);
 
 // Meses
 
@@ -55,4 +53,9 @@ Route::apiResource('acertos', AcertoController::class);
 // Usuários - CRUD protegido
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 Route::get('/usuarios', [UsuarioController::class, 'index']);
+
+// Lançamentos
+Route::get('/lancamentos-combinados/{id_mes}', [LancamentoController::class, 'getCombinedByMes']);
+Route::apiResource('lancamentos', LancamentoController::class);
+Route::put('/lancamentos', [LancamentoController::class, 'update']);
 });
