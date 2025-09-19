@@ -74,7 +74,6 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
       fetchCombinedData();
   };
 
-  // Funções para lidar com a edição e exclusão
   const handleOpenEditLancamentoModal = (lancamento: Lancamento) => {
     setSelectedLancamento(lancamento);
     setIsLancamentoEditModalOpen(true);
@@ -96,7 +95,6 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   };
 
   const handleDeleteLancamento = async (id: string | number) => {
-    // Implemente a lógica de confirmação e chamada da API de exclusão aqui
     if (window.confirm('Tem certeza que deseja excluir este lançamento?')) {
         await AcertosService.deleteLancamento(id);
         fetchCombinedData();
@@ -104,7 +102,6 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   };
 
   const handleDeleteAcerto = async (id: number) => {
-    // Implemente a lógica de confirmação e chamada da API de exclusão aqui
     if (window.confirm('Tem certeza que deseja excluir este acerto?')) {
         await AcertosService.deleteAcerto(id);
         fetchAcertosData();
@@ -292,7 +289,6 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
         onLancamentoSaved={handleLancamentoSaved}
         idMes={idMes}
       />
-      {/* Novas modais de edição que criaremos a seguir */}
       {isLancamentoEditModalOpen && selectedLancamento && (
           <LancamentoEditModal 
               isOpen={isLancamentoEditModalOpen} 

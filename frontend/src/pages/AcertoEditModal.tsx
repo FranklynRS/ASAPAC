@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './AcertoEditModal.scss'; // Crie este arquivo SCSS
+import './AcertoEditModal.scss';
 import { AcertosService, Acerto, Mensageiro } from '../services/acertosService';
 import { AuthService } from '../services/auth';
 
@@ -25,7 +25,6 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
 
   useEffect(() => {
     if (isOpen && acerto) {
-      // Pré-preenche o formulário com os dados do acerto
       setValorRecebido(acerto.valor_recebido);
       setPagamento(acerto.pagamento);
       setGasolina(acerto.gasolina);
@@ -70,7 +69,6 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
         hotel: hotel,
         alimentacao: alimentacao,
         outros: outros,
-        // O ID do usuário e do mês serão tratados no back-end
       };
       
       await AcertosService.updateAcerto(acerto.id_acerto, acertosData);

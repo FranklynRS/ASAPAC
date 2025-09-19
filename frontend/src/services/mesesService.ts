@@ -31,7 +31,7 @@ export const MesesService = {
       console.log('Mês cadastrado com sucesso!');
     } catch (err) {
       console.error(err);
-      throw err; // ou trate o erro de outra forma
+      throw err;
     }
   },
 

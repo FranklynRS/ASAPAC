@@ -47,7 +47,6 @@ const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClo
       return;
     }
     
-    // Validar se uma categoria foi selecionada
     if (!selectedCategoriaId) {
       setError('Por favor, selecione uma modalidade.');
       setIsLoading(false);

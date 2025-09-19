@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MesesPage.scss';
 import { MesesService } from '../services/mesesService';
 import refreshIcon from '../assets/refresh.png';
+import { AuthService } from '../services/auth';
 
 interface Mes {
   id: number;
@@ -20,6 +21,7 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newMonth, setNewMonth] = useState('');
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchMeses = async () => {
     setIsLoading(true);
@@ -55,6 +57,40 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
     }
   };
 
+  const handleDownloadReport = async (idMes: number, mesNome: string) => {
+    setIsDownloading(true);
+    try {
+      const token = AuthService.getToken();
+      if (!token) throw new Error('Token de autenticação não encontrado.');
+
+      const response = await fetch(`http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao gerar o relatório.');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `relatorio-mensal-${mesNome}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error(error);
+      setError('Erro ao gerar relatório. Tente novamente.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   useEffect(() => {
     fetchMeses();
   }, []);
@@ -64,8 +100,8 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   );
 
   const handleVoltarClick = () => {
-    setError(null); // Reseta o estado de erro
-    fetchMeses(); // Opcional: recarregar a lista
+    setError(null);
+    fetchMeses();
   };
 
   if (isLoading) {
@@ -128,9 +164,18 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
                 <span className={`meses-row__value meses-row__value--${month.status}`}>
                   {month.status === 'positivo' ? '▲' : '▼'} R${Math.abs(month.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
-                <button className="meses-row__button" onClick={() => onLancamentosClick({ id: month.id, nome: month.nome })}>
-                  Lançamentos
-                </button>
+                <div className="meses-row-buttons">
+                    <button className="meses-row__button" onClick={() => onLancamentosClick({ id: month.id, nome: month.nome })}>
+                        Lançamentos
+                    </button>
+                    <button 
+                        className="meses-row__button-relatorio" 
+                        onClick={() => handleDownloadReport(month.id, month.nome)} 
+                        disabled={isDownloading}
+                    >
+                        {isDownloading ? 'Gerando...' : 'Relatório'}
+                    </button>
+                </div>
               </div>
             </div>
           ))}

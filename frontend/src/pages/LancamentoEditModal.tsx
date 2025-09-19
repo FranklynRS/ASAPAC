@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './LancamentoEditModal.scss'; // Crie este arquivo SCSS
+import './LancamentoEditModal.scss';
 import { AcertosService, Lancamento, Categoria, LancamentoData } from '../services/acertosService';
 import { AuthService } from '../services/auth';
 
@@ -53,10 +53,9 @@ const LancamentoEditModal: React.FC<LancamentoEditModalProps> = ({ isOpen, onClo
         valor: valor,
         descricao: descricao,
         id_categoria: selectedCategoriaId,
-        // Campos que não mudam
-        id_mes: 0, // placeholder, será sobrescrito
-        id_usuario: 0, // placeholder, será sobrescrito
-        tipo: lancamento.categoria.tipo, // mantém o tipo original
+        id_mes: 0, 
+        id_usuario: 0,
+        tipo: lancamento.categoria.tipo, 
       };
       
       await AcertosService.updateLancamento(lancamento.id_lancamento, updatedLancamento);

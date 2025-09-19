@@ -64,7 +64,6 @@ class AcertoController extends Controller
                 return $acerto->mensageiro !== null;
             });
 
-        // Mapeia os acertos para garantir que todos os valores sejam floats
         $dadosFormatados = $acertos->map(function($acerto) {
             return [
                 'id_acerto' => (int) $acerto->id_acerto,

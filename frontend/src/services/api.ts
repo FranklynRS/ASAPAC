@@ -30,7 +30,6 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
-      // Removido window.location.href - não força reload
       console.warn('Token inválido - usuário deslogado');
     }
     return Promise.reject(error);
