@@ -54,7 +54,7 @@ class MesController extends Controller
         return response()->json($mes);
     }
 
-    public function getMesesComSaldos()
+public function getMesesComSaldos()
 {
     $meses = Mes::all()->map(function ($mes) {
         $saldo = $mes->lancamentos()->sum('valor');
@@ -65,8 +65,10 @@ class MesController extends Controller
             'saldo' => $saldo,
             'status' => $status
         ];
-    });
+    })->sortByDesc('ano_mes')
+      ->values();
 
     return response()->json($meses);
 }
+
 }
