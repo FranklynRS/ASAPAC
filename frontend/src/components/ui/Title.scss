@@ -1,0 +1,18 @@
+@use '../../styles/variables' as *;
+
+.title {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  
+  &--primary {
+    font-size: 28px;
+    color: $text-primary;
+  }
+  
+  &--secondary {
+    font-size: 16px;
+    color: $text-secondary;
+    font-weight: 400;
+    margin-bottom: 32px;
+  }
+}

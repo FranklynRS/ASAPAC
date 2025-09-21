@@ -1,0 +1,56 @@
+@use '../../styles/variables' as *;
+
+.button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+  
+  &--primary {
+    background-color: $button-green;
+    color: white;
+    
+    &:hover {
+      background-color: darken($button-green, 10%);
+    }
+  }
+  
+  &--secondary {
+    background-color: transparent;
+    color: $text-secondary;
+    
+    &:hover {
+      color: $text-primary;
+    }
+  }
+  
+  &__spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// Spinner circular moderno (igual sites famosos)
+.spinner-circle {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

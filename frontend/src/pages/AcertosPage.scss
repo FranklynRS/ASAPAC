@@ -1,0 +1,185 @@
+.acertos-container {
+  padding: 24px;
+  background-color: #f8f9fa;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.acertos-header-info h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #404B9D;
+  margin-bottom: 20px;
+}
+
+.resumo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.resumo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.resumo-card .icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.resumo-card .text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.resumo-card .valor {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.resumo-card.recebido .valor, .resumo-card.recebido .icon {
+  color: #4CAF50;
+}
+
+.resumo-card.pago .valor, .resumo-card.pago .icon {
+  color: #F44336;
+}
+
+.resumo-card.saldo .icon, .resumo-card.saldo .valor {
+  color: #404B9D;
+}
+
+.acertos-table-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.acertos-tabs {
+  display: flex;
+  gap: 5px;
+}
+
+.tab-button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #404B9D;
+  color: #fff;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #0c1a81;
+    }
+}
+
+.tab-button.tab-active {
+  background-color: #0c1a81;
+}
+
+.btn-novo-lancamento {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.acertos-table-wrapper {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.acertos-table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
+
+.acertos-table th, .acertos-table td {
+  padding: 15px;
+  text-align: left;
+}
+
+.acertos-table th {
+  background-color: #404B9D;
+  font-weight: 500;
+  color: #fff;
+}
+
+.acertos-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.acertos-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.lancamento-valor {
+  font-weight: bold;
+}
+
+.valor--recebido {
+  color: #4CAF50;
+}
+
+.valor--pago {
+  color: #F44336;
+}
+
+.btn-detalhes {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-voltar-acertos {
+  background-color: #404B9D;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-voltar-acertos:hover {
+  background-color: #2e3e8f;
+}
+
+.btn-novo-lancamento {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #45a049;
+  }
+
+  .botoes-acao {
+  display: flex;
+  gap: 0px;
+}
+}

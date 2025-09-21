@@ -1,0 +1,36 @@
+@use '../../styles/variables' as *;
+
+.header {
+  background: $left-section-color;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  
+  &__title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
+  &__user {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    margin-left: auto;
+  }
+
+  &__user-icon {
+    width: 30px; 
+    height: auto;
+    margin-right: 8px; 
+    border-radius: 0%; 
+    vertical-align: middle;
+  }
+}

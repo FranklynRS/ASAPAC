@@ -1,0 +1,110 @@
+@use '../../styles/variables' as *;
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  box-sizing: border-box;
+  
+  &:focus {
+    outline: none;
+    border-color: $left-section-color;
+  }
+  
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.input-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: #666;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: $left-section-color;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  &--visible {
+    color: $left-section-color;
+    
+    .eye-icon--open {
+      animation: eyeBlink 0.3s ease;
+    }
+  }
+  
+  &--hidden {
+    color: #999;
+    
+    .eye-icon--closed {
+      animation: eyeBlink 0.3s ease;
+    }
+  }
+}
+
+.eye-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background: transparent;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    border-radius: 50%;
+  }
+  
+  .strikethrough {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ccf95932.css",
+    "main.js": "/static/js/main.ed398ec6.js",
+    "static/media/logoasapac.png": "/static/media/logoasapac.4dc4c675cb95d7de26b4.png",
+    "index.html": "/index.html",
+    "main.ccf95932.css.map": "/static/css/main.ccf95932.css.map",
+    "main.ed398ec6.js.map": "/static/js/main.ed398ec6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ccf95932.css",
+    "static/js/main.ed398ec6.js"
+  ]
+}
