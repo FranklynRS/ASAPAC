@@ -1,7 +1,10 @@
 .mensageiros-container {
-  padding: 24px;
-  background-color: #f8f9fa;
-  flex: 1;
+    padding: 24px;
+    background-color: #f8f9fa;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .mensageiros-header-row {
@@ -70,6 +73,14 @@
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    padding-right: 10px; 
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 }
 
 .mensageiros-table {

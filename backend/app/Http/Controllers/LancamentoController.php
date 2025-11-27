@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lancamento;
 use App\Models\Categoria;
-use App\Models\Acerto; // Adicione o modelo de Acerto
+use App\Models\Acerto;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\AcertoController;
