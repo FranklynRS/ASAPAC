@@ -20,18 +20,17 @@ class Acerto extends Model
         'valor_recebido',
         'pagamento',
         'gasolina',
+        'hotel',
         'alimentacao',
         'outros',
         'mes_id',
     ];
 
-    /* Define a relação: um Acerto pertence a um Mensageiro.*/
     public function mensageiro()
     {
         return $this->belongsTo(Mensageiro::class, 'id_mensageiro', 'id_mensageiro');
     }
 
-    /* Define a relação: um Acerto pertence a um Usuario. */
     public function usuario()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');

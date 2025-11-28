@@ -6,9 +6,17 @@ interface AcertosDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   acerto: Acerto | null;
+  title?: string;
+  hideRecebimento?: boolean;
 }
 
-const AcertosDetailsModal: React.FC<AcertosDetailsModalProps> = ({ isOpen, onClose, acerto }) => {
+const AcertosDetailsModal: React.FC<AcertosDetailsModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  acerto, 
+  title = "Detalhes do Acerto",
+  hideRecebimento = false 
+}) => {
   if (!isOpen || !acerto) {
     return null;
   }
@@ -17,19 +25,23 @@ const AcertosDetailsModal: React.FC<AcertosDetailsModalProps> = ({ isOpen, onClo
     <div className="details-modal-overlay">
       <div className="details-modal-content">
         <button className="details-modal-close-btn" onClick={onClose}>&times;</button>
-        <h2 className="details-modal-title">Detalhes do Acerto</h2>
+        <h2 className="details-modal-title">{title}</h2>
         
         <div className="details-grid">
           <div className="detail-item">
             <strong>Nome:</strong>
             <span>{acerto.nome_mensageiro}</span>
           </div>
+          
+          {!hideRecebimento && (
+            <div className="detail-item">
+                <strong>Recebimento:</strong>
+                <span>R$ {Number(acerto.valor_recebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+            </div>
+          )}
+
           <div className="detail-item">
-            <strong>Recebimento:</strong>
-            <span>R$ {Number(acerto.valor_recebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-          </div>
-          <div className="detail-item">
-            <strong>Pagamento:</strong>
+            <strong>Pagamento (Dinheiro):</strong>
             <span>R$ {Number(acerto.pagamento).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
           </div>
           <div className="detail-item">

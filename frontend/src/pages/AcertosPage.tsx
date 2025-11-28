@@ -6,7 +6,6 @@ import AcertosDetailsModal from './AcertosDetailsModal';
 import LancamentoFormModal from './LancamentoFormModal';
 import editarIcon from '../assets/editar.png';
 import excluirIcon from '../assets/excluir.png';
-import refreshIcon from '../assets/refresh.png';
 
 import LancamentoEditModal from './LancamentoEditModal';
 import AcertoEditModal from './AcertoEditModal';
@@ -26,22 +25,19 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedAcerto, setSelectedAcerto] = useState<Acerto | null>(null);
+  const [detailsModalConfig, setDetailsModalConfig] = useState({ title: 'Detalhes do Acerto', hideRecebimento: false });
   const [isLancamentoModalOpen, setIsLancamentoModalOpen] = useState(false);
-  
-  // Novos estados para a edição
   const [isLancamentoEditModalOpen, setIsLancamentoEditModalOpen] = useState(false);
   const [selectedLancamento, setSelectedLancamento] = useState<Lancamento | null>(null);
   const [isAcertoEditModalOpen, setIsAcertoEditModalOpen] = useState(false);
   const [selectedAcertoToEdit, setSelectedAcertoToEdit] = useState<Acerto | null>(null);
-
 
   const fetchCombinedData = async () => {
     try {
       const data = await AcertosService.fetchCombinedByMes(idMes);
       setLancamentos(data);
     } catch (err) {
-      setError('Erro ao carregar os lançamentos. Por favor, tente novamente.');
-      console.error(err);
+      setError('Erro ao carregar os lançamentos.');
     }
   };
 
@@ -50,14 +46,32 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
       const data = await AcertosService.fetchAcertosByMes(idMes);
       setAcertos(data);
     } catch (err) {
-      setError('Erro ao carregar os acertos. Por favor, tente novamente.');
-      console.error(err);
+      setError('Erro ao carregar os acertos.');
     }
   };
 
   const handleOpenDetailsModal = (acerto: Acerto) => {
     setSelectedAcerto(acerto);
+    setDetailsModalConfig({ title: 'Detalhes do Acerto', hideRecebimento: false });
     setIsDetailsModalOpen(true);
+  };
+
+  const handleOpenDetailsFromLancamento = (lancamentoId: string | number) => {
+    const idString = String(lancamentoId);
+    if (idString.includes('acerto')) {
+       const realId = Number(idString.split('_').pop());
+       const acertoOriginal = acertos.find(a => a.id_acerto === realId);
+       
+       if (acertoOriginal) {
+         setSelectedAcerto(acertoOriginal);
+         if (activeTab === 'Pagamentos') {
+             setDetailsModalConfig({ title: 'Detalhes do Pagamento', hideRecebimento: true });
+         } else {
+             setDetailsModalConfig({ title: 'Detalhes do Acerto', hideRecebimento: false });
+         }
+         setIsDetailsModalOpen(true);
+       }
+    }
   };
 
   const handleCloseDetailsModal = () => {
@@ -65,12 +79,23 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
     setSelectedAcerto(null);
   };
 
+  const handleEditGeneric = (lancamento: Lancamento) => {
+    const idString = String(lancamento.id_lancamento);
+    
+    if (idString.includes('acerto')) {
+        const realId = Number(idString.split('_').pop());
+        const acertoOriginal = acertos.find(a => a.id_acerto === realId);
+        if (acertoOriginal) {
+            handleOpenEditAcertoModal(acertoOriginal);
+        }
+    } else {
+        handleOpenEditLancamentoModal(lancamento);
+    }
+  };
+
   const handleLancamentoSaved = (tipo: 'recebimento' | 'pagamento') => {
-      if (tipo === 'recebimento') {
-          setActiveTab('Recebimentos');
-      } else {
-          setActiveTab('Pagamentos');
-      }
+      if (tipo === 'recebimento') setActiveTab('Recebimentos');
+      else setActiveTab('Pagamentos');
       fetchCombinedData();
   };
 
@@ -96,7 +121,14 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
   const handleDeleteLancamento = async (id: string | number) => {
     if (window.confirm('Tem certeza que deseja excluir este lançamento?')) {
-        await AcertosService.deleteLancamento(id);
+        const idString = String(id);
+        if (idString.includes('acerto')) {
+            const realId = Number(idString.split('_').pop());
+            await AcertosService.deleteAcerto(realId);
+            fetchAcertosData(); 
+        } else {
+            await AcertosService.deleteLancamento(id);
+        }
         fetchCombinedData();
     }
   };
@@ -111,14 +143,12 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
   useEffect(() => {
     if (idMes === null) return;
-    
     const fetchData = async () => {
       setIsLoading(true);
       await Promise.all([fetchCombinedData(), fetchAcertosData()]);
       setIsLoading(false);
     };
     fetchData();
-
   }, [idMes]);
 
   const totalRecebido = lancamentos
@@ -131,13 +161,8 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
   const saldoFinal = totalRecebido - totalPago;
 
-  if (isLoading) {
-    return <div className="acertos-container">Carregando dados...</div>;
-  }
-
-  if (error) {
-    return <div className="acertos-container error-message">{error}</div>;
-  }
+  if (isLoading) return <div className="acertos-container">Carregando dados...</div>;
+  if (error) return <div className="acertos-container error-message">{error}</div>;
   
   return (
     <div className="acertos-container">
@@ -166,30 +191,15 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
 
       <div className="acertos-table-controls">
         <div className="acertos-tabs">
-          <button
-            className={`tab-button${activeTab === 'Recebimentos' ? ' tab-active' : ''}`}
-            onClick={() => setActiveTab('Recebimentos')}
-          >
-            Recebimentos
-          </button>
-          <button
-            className={`tab-button${activeTab === 'Pagamentos' ? ' tab-active' : ''}`}
-            onClick={() => setActiveTab('Pagamentos')}
-          >
-            Pagamentos
-          </button>
-          <button
-            className={`tab-button${activeTab === 'Acertos' ? ' tab-active' : ''}`}
-            onClick={() => setActiveTab('Acertos')}
-          >
-            Acertos
-          </button>
-          <button
-            className={`tab-button${activeTab === 'Histórico' ? ' tab-active' : ''}`}
-            onClick={() => setActiveTab('Histórico')}
-          >
-            Histórico
-          </button>
+          {['Recebimentos', 'Pagamentos', 'Acertos', 'Histórico'].map(tab => (
+             <button
+                key={tab}
+                className={`tab-button${activeTab === tab ? ' tab-active' : ''}`}
+                onClick={() => setActiveTab(tab as any)}
+             >
+                {tab}
+             </button>
+          ))}
         </div>
         <div className="botoes-acao">
           <button className="btn-novo-lancamento" onClick={() => setIsLancamentoModalOpen(true)}>Novo Lançamento</button>
@@ -204,38 +214,42 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
               <tr>
                 <th>Nome</th>
                 <th>Recebimento</th>
-                <th>Pagamento</th>
+                <th>Pagamento (Total)</th>
                 <th>Detalhes</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {acertos.map(acerto => (
-                <tr key={acerto.id_acerto}>
-                  <td>{acerto.nome_mensageiro}</td>
-                  <td>
-                    <span className="lancamento-valor valor--recebido">
-                        + R$ {Number(acerto.valor_recebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </span>
-                  </td>
-                  <td>
-                    <span className="lancamento-valor valor--pago">
-                        - R$ {Number(acerto.pagamento).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </span>
-                  </td>
-                  <td>
-                    <button className="btn-detalhes" onClick={() => handleOpenDetailsModal(acerto)}>Detalhes</button>
-                  </td>
-                  <td className="acao-buttons">
-                    <button className="btn-editar" onClick={() => handleOpenEditAcertoModal(acerto)}>
-                      <img src={editarIcon} alt="Editar" />
-                    </button>
-                    <button className="btn-excluir" onClick={() => handleDeleteAcerto(acerto.id_acerto)}>
-                      <img src={excluirIcon} alt="Excluir" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {acertos.map(acerto => {
+                const totalDespesasAcerto = Number(acerto.pagamento) + Number(acerto.gasolina) + Number(acerto.hotel) + Number(acerto.alimentacao) + Number(acerto.outros);
+                
+                return (
+                  <tr key={acerto.id_acerto}>
+                    <td>{acerto.nome_mensageiro}</td>
+                    <td>
+                      <span className="lancamento-valor valor--recebido">
+                          + R$ {Number(acerto.valor_recebido).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="lancamento-valor valor--pago">
+                          - R$ {totalDespesasAcerto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="btn-detalhes" onClick={() => handleOpenDetailsModal(acerto)}>Detalhes</button>
+                    </td>
+                    <td className="acao-buttons">
+                      <button className="btn-editar" onClick={() => handleOpenEditAcertoModal(acerto)}>
+                        <img src={editarIcon} alt="Editar" />
+                      </button>
+                      <button className="btn-excluir" onClick={() => handleDeleteAcerto(acerto.id_acerto)}>
+                        <img src={excluirIcon} alt="Excluir" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         ) : (
@@ -245,33 +259,57 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
                 <th>Modalidade</th>
                 <th>Valor</th>
                 <th>Descrição</th>
+                <th>Detalhes</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {lancamentos.filter(l => activeTab === 'Histórico' || l.categoria?.tipo === (activeTab === 'Recebimentos' ? 1 : 0)).map(lancamento => (
-                <tr key={String(lancamento.id_lancamento)}>
-                  <td>{lancamento.categoria?.nome_categoria}</td>
-                  <td>
-                    <span className={`lancamento-valor valor--${lancamento.categoria?.tipo === 1 ? 'recebido' : 'pago'}`}>
-                      {lancamento.categoria?.tipo === 1 ? '+' : '-'} R$ {Number(lancamento.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </span>
-                  </td>
-                  <td>{lancamento.descricao}</td>
-                  <td className="acao-buttons">
-                    <button className="btn-editar" onClick={() => handleOpenEditLancamentoModal(lancamento)}>
-                      <img src={editarIcon} alt="Editar" />
-                    </button>
-                    <button className="btn-excluir" onClick={() => handleDeleteLancamento(lancamento.id_lancamento)}>
-                      <img src={excluirIcon} alt="Excluir" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {lancamentos
+                .filter(l => activeTab === 'Histórico' || l.categoria?.tipo === (activeTab === 'Recebimentos' ? 1 : 0))
+                .map(lancamento => {
+                  const isAcertoRow = String(lancamento.id_lancamento).includes('acerto');
+                  
+                  return (
+                    <tr key={String(lancamento.id_lancamento)}>
+                      <td>{lancamento.categoria?.nome_categoria}</td>
+                      <td>
+                        <span className={`lancamento-valor valor--${lancamento.categoria?.tipo === 1 ? 'recebido' : 'pago'}`}>
+                          {lancamento.categoria?.tipo === 1 ? '+' : '-'} R$ {Number(lancamento.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </span>
+                      </td>
+                      <td>{lancamento.descricao}</td>
+                      
+                      <td>
+                        {isAcertoRow ? (
+                          <button 
+                             className="btn-detalhes" 
+                             onClick={() => handleOpenDetailsFromLancamento(lancamento.id_lancamento)}
+                          >
+                             Detalhes
+                          </button>
+                        ) : (
+                          <span style={{color: '#999', fontSize: '12px'}}>—</span>
+                        )}
+                      </td>
+
+                      <td className="acao-buttons">
+                        <button className="btn-editar" onClick={() => handleEditGeneric(lancamento)}>
+                            <img src={editarIcon} alt="Editar" />
+                        </button>
+                        
+                        <button className="btn-excluir" onClick={() => handleDeleteLancamento(lancamento.id_lancamento)}>
+                          <img src={excluirIcon} alt="Excluir" />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         )}
       </div>
+      
+      {/* Modais (Mantive igual) */}
       <AcertosFormModal 
         isOpen={isFormModalOpen} 
         onClose={() => setIsFormModalOpen(false)} 
@@ -282,6 +320,8 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
         isOpen={isDetailsModalOpen}
         onClose={handleCloseDetailsModal}
         acerto={selectedAcerto}
+        title={detailsModalConfig.title}
+        hideRecebimento={detailsModalConfig.hideRecebimento}
       />
       <LancamentoFormModal
         isOpen={isLancamentoModalOpen}
@@ -291,25 +331,25 @@ const AcertosPage: React.FC<AcertosPageProps> = ({ idMes, mesNome, onVoltarClick
       />
       {isLancamentoEditModalOpen && selectedLancamento && (
           <LancamentoEditModal 
-              isOpen={isLancamentoEditModalOpen} 
-              onClose={handleCloseEditLancamentoModal} 
-              lancamento={selectedLancamento} 
-              onLancamentoSaved={() => {
-                  fetchCombinedData();
-                  handleCloseEditLancamentoModal();
-              }}
+             isOpen={isLancamentoEditModalOpen} 
+             onClose={handleCloseEditLancamentoModal} 
+             lancamento={selectedLancamento} 
+             onLancamentoSaved={() => {
+                 fetchCombinedData();
+                 handleCloseEditLancamentoModal();
+             }}
           />
       )}
       {isAcertoEditModalOpen && selectedAcertoToEdit && (
           <AcertoEditModal 
-              isOpen={isAcertoEditModalOpen} 
-              onClose={handleCloseEditAcertoModal} 
-              acerto={selectedAcertoToEdit} 
-              onAcertoSaved={() => {
-                  fetchAcertosData();
-                  fetchCombinedData();
-                  handleCloseEditAcertoModal();
-              }}
+             isOpen={isAcertoEditModalOpen} 
+             onClose={handleCloseEditAcertoModal} 
+             acerto={selectedAcertoToEdit} 
+             onAcertoSaved={() => {
+                 fetchAcertosData();
+                 fetchCombinedData();
+                 handleCloseEditAcertoModal();
+             }}
           />
       )}
     </div>

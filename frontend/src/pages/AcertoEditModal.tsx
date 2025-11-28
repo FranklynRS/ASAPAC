@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AcertoEditModal.scss';
 import { AcertosService, Acerto, Mensageiro } from '../services/acertosService';
-import { AuthService } from '../services/auth';
 
 interface AcertoEditModalProps {
   isOpen: boolean;
@@ -31,6 +30,8 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
       setHotel(acerto.hotel);
       setAlimentacao(acerto.alimentacao);
       setOutros(acerto.outros);
+      
+      setSelectedMensageiroId(acerto.id_mensageiro || null);
 
       const fetchData = async () => {
         try {
@@ -97,7 +98,7 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
             <div className="form-group">
               <label>Selecionar Mensageiro</label>
               <select
-                value={selectedMensageiroId || acerto.id_mensageiro || ''}
+                value={selectedMensageiroId || ''}
                 onChange={e => setSelectedMensageiroId(Number(e.target.value))}
                 required
               >
