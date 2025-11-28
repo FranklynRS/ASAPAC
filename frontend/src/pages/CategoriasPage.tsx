@@ -7,11 +7,17 @@ import editarIcon from '../assets/editar.png';
 import excluirIcon from '../assets/excluir.png';
 import refreshIcon from '../assets/refresh.png';
 
+interface CategoriaComUsuario extends Categoria {
+  usuario?: {
+    id_usuario: number;
+    nome_usuario: string;
+  };
+}
+
 interface CategoriaComDetalhes extends Categoria {
   created_at: string;
   created_by_user_name: string;
   descricao: string | null;
-  
 }
 
 const CategoriasPage: React.FC = () => {
@@ -24,28 +30,29 @@ const CategoriasPage: React.FC = () => {
   const [categoriaToEdit, setCategoriaToEdit] = useState<Categoria | null>(null);
   const [categoriaToView, setCategoriaToView] = useState<CategoriaComDetalhes | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-const fetchCategorias = async () => {
-    setIsLoading(true);
-    try {
-      const data: Categoria[] = await CategoriaService.fetchCategorias();
-      
-      const categoriasComDetalhes: CategoriaComDetalhes[] = data.map((cat: Categoria) => ({
-        ...cat,
-        created_at: cat.created_at,
-        created_by_user_name: cat.created_by_user_name, 
-        descricao: cat.descricao || null
-      }));
+  const fetchCategorias = async () => {
+    setIsLoading(true);
+    try {
+      const data: any[] = await CategoriaService.fetchCategorias();
+      
+      const categoriasComDetalhes: CategoriaComDetalhes[] = data.map((cat) => ({
+        ...cat,
+        created_at: cat.created_at,
+        created_by_user_name: cat.usuario ? cat.usuario.nome_usuario : 'Usuário não informado', 
+        descricao: cat.descricao || null
+      }));
 
-      setTodasCategorias(categoriasComDetalhes);
-      setCategorias(categoriasComDetalhes);
-    } catch (err) {
-      setError('Erro ao carregar as categorias. Por favor, tente novamente.');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-};
+      setTodasCategorias(categoriasComDetalhes);
+      setCategorias(categoriasComDetalhes);
+    } catch (err) {
+      setError('Erro ao carregar as categorias.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchCategorias();
@@ -85,6 +92,10 @@ const fetchCategorias = async () => {
 
   const handleCategoriaSaved = () => {
     fetchCategorias();
+    setSuccessMessage('Categoria salva com sucesso!');
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000);
   };
 
   const handleExcluirClick = async (id: number) => {
@@ -92,6 +103,8 @@ const fetchCategorias = async () => {
       try {
         await CategoriaService.deleteCategoria(id);
         fetchCategorias();
+        setSuccessMessage('Categoria excluída com sucesso!');
+        setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
         setError('Erro ao excluir categoria.');
         console.error(err);
@@ -109,6 +122,13 @@ const fetchCategorias = async () => {
   
   return (
     <div className="categorias-container">
+      {successMessage && (
+        <div className="success-popup">
+            <span className="icon"></span>
+            {successMessage}
+        </div>
+      )}
+
       <div className="categorias-header-row">
         <h1>Lista de Categorias</h1>
         <button className="btn-nova-categoria" onClick={handleNovaCategoriaClick}>Nova Categoria</button>

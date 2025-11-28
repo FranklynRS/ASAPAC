@@ -12,6 +12,5 @@ class Mensageiro extends Model
 
     protected $fillable = ['nome_mensageiro', 'telefone', 'codigo_mensageiro', 'status'];
 
-    public $timestamps = false;
-
+    public $timestamps = true; 
 }

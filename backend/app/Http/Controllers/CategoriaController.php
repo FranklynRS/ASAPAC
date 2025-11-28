@@ -10,15 +10,15 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        return Categoria::all();
+        return Categoria::with('usuario')->get();
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [ 
-            'nome_categoria' => 'required|string|max:255',
-            'descricao' => 'nullable|string',
-            'tipo' => 'required|boolean', // 1 = entrada, 0 = saída
+            'nome_categoria' => 'required|string|max:40',
+            'descricao' => 'nullable|string|max:200',
+            'tipo' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -28,7 +28,14 @@ class CategoriaController extends Controller
             ], 422);
         }
 
-        $categoria = Categoria::create($validator->validated());
+        $data = $validator->validated();
+        $user = auth('api')->user(); 
+
+        if ($user) {
+            $data['id_usuario'] = $user->id_usuario;
+        }
+
+        $categoria = Categoria::create($data);
 
         return response()->json($categoria, 201);
     }
@@ -36,8 +43,8 @@ class CategoriaController extends Controller
     public function update(Request $request, Categoria $categoria)
     {
         $validator = Validator::make($request->all(), [
-            'nome_categoria' => 'required|string|max:255',
-            'descricao' => 'nullable|string',
+            'nome_categoria' => 'required|string|max:40',
+            'descricao' => 'nullable|string|max:200',
             'tipo' => 'required|boolean',
         ]);
 
@@ -55,7 +62,7 @@ class CategoriaController extends Controller
 
     public function show($id)
     {
-        $categoria = Categoria::findOrFail($id);
+        $categoria = Categoria::with('usuario')->findOrFail($id);
         return response()->json($categoria);
     }
 }

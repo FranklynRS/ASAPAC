@@ -29,15 +29,22 @@ export const CategoriaService = {
     try {
       const token = AuthService.getToken();
       if (!token) throw new Error('Token de autenticação não encontrado.');
+      
       const response = await fetch('http://127.0.0.1:8000/api/categorias', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(categoriaData),
       });
-      if (!response.ok) throw new Error('Falha ao criar categoria.');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Falha ao criar categoria.');
+      }
+      
       return await response.json();
     } catch (error) {
       console.error('Erro ao criar categoria:', error);

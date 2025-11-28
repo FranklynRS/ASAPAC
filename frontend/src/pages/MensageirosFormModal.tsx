@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './MensageiroFormModal.scss';
+import './MensageirosFormModal.scss';
 import { MensageirosService, Mensageiro } from '../services/mensageirosService';
 import InputMask from '@mona-health/react-input-mask';
 import Modal from 'react-modal';
 
-interface MensageiroFormModalProps {
+interface MensageirosFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onMensageiroSaved: () => void;
@@ -13,7 +13,7 @@ interface MensageiroFormModalProps {
 
 Modal.setAppElement('#root');
 
-const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClose, onMensageiroSaved, mensageiroToEdit }) => {
+const MensageirosFormModal: React.FC<MensageirosFormModalProps> = ({ isOpen, onClose, onMensageiroSaved, mensageiroToEdit }) => {
   const [nome, setNome] = useState('');
   const [codigo, setCodigo] = useState('');
   const [telefone, setTelefone] = useState('');
@@ -33,7 +33,16 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
       setTelefone('');
       setStatus(true);
     }
-  }, [mensageiroToEdit]);
+  }, [mensageiroToEdit, isOpen]);
+
+  const handleNomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    value = value.replace(/[0-9]/g, '');
+    
+    if (value.length <= 40) {
+      setNome(value);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,10 +62,11 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
       } else {
         await MensageirosService.createMensageiro(mensageiroData);
       }
-      onMensageiroSaved();
+      onMensageiroSaved(); 
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Erro ao salvar mensageiro. Verifique os dados.');
+      const msg = err.response?.data?.message || err.message || 'Erro ao salvar mensageiro.';
+      setError(msg);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -73,7 +83,9 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
     >
       <button className="modal-close-btn" onClick={onClose}>&times;</button>
       <h2 className="modal-title">{mensageiroToEdit ? 'Editar Mensageiro' : 'Cadastro de Mensageiro'}</h2>
+      
       {error && <p className="error-message">{error}</p>}
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="codigo">Código:</label>
@@ -85,17 +97,21 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
             required
           />
         </div>
+        
         <div className="form-group">
           <label htmlFor="nome">Nome:</label>
           <input
             type="text"
             id="nome"
-            placeholder="Nome"
+            placeholder="Nome (Sem números)"
             value={nome}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNome(e.target.value)}
+            onChange={handleNomeChange}
+            maxLength={40}
             required
           />
+          <small className="char-count">{nome.length}/40</small>
         </div>
+
         <div className="form-group">
           <label htmlFor="telefone">Telefone:</label>
           <InputMask
@@ -106,6 +122,7 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="status">Status:</label>
           <select
@@ -118,6 +135,7 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
             <option value="false">Inativo</option>
           </select>
         </div>
+
         <div className="form-actions">
           <button type="submit" className="btn-gravar" disabled={isLoading}>
             {isLoading ? 'Salvando...' : 'Gravar'}
@@ -128,4 +146,4 @@ const MensageiroFormModal: React.FC<MensageiroFormModalProps> = ({ isOpen, onClo
   );
 };
 
-export default MensageiroFormModal;
+export default MensageirosFormModal;
