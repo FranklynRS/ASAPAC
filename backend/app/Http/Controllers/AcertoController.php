@@ -20,21 +20,46 @@ class AcertoController extends Controller
         return response()->json($acerto->load(['mensageiro']), 201);
     }
 
-    public function show(Acerto $acerto)
+    public function show($id)
     {
+        $acerto = Acerto::find($id);
+        if (!$acerto) {
+            return response()->json(['message' => 'Acerto não encontrado'], 404);
+        }
         return response()->json($acerto->load(['mensageiro']));
     }
 
-    public function update(Request $request, Acerto $acerto)
+    public function update(Request $request, $id)
     {
-        $validatedData = $request->validate($this->getValidationRules(true));
-        $acerto->update($validatedData);
+        $acerto = Acerto::find($id);
+
+        if (!$acerto) {
+            return response()->json(['message' => 'Acerto não encontrado'], 404);
+        }
+
+        $validated = $request->validate([
+            'id_mensageiro' => 'required|integer|exists:mensageiros,id_mensageiro',
+            'valor_recebido' => 'numeric|min:0',
+            'pagamento' => 'numeric|min:0',
+            'gasolina' => 'numeric|min:0',
+            'hotel' => 'numeric|min:0',
+            'alimentacao' => 'numeric|min:0',
+            'outros' => 'numeric|min:0',
+        ]);
+
+        $acerto->update($validated);
+
         return response()->json($acerto->load(['mensageiro']));
     }
 
     public function destroy($id)
     {
-        $acerto = Acerto::findOrFail($id);
+        $acerto = Acerto::find($id);
+        
+        if (!$acerto) {
+            return response()->json(['message' => 'Acerto não encontrado'], 404);
+        }
+
         $acerto->delete();
         return response()->json(['message' => 'Acerto excluído com sucesso']);
     }
@@ -67,6 +92,7 @@ class AcertoController extends Controller
         $dadosFormatados = $acertos->map(function($acerto) {
             return [
                 'id_acerto' => (int) $acerto->id_acerto,
+                'id_mensageiro' => (int) $acerto->id_mensageiro,
                 'nome_mensageiro' => $acerto->mensageiro->nome_mensageiro,
                 'valor_recebido' => (float) $acerto->valor_recebido,
                 'pagamento' => (float) $acerto->pagamento,
@@ -74,6 +100,8 @@ class AcertoController extends Controller
                 'hotel' => (float) $acerto->hotel,
                 'alimentacao' => (float) $acerto->alimentacao,
                 'outros' => (float) $acerto->outros,
+                'id_usuario' => (int) $acerto->id_usuario,
+                'mes_id' => (int) $acerto->mes_id,
             ];
         })->values();
 

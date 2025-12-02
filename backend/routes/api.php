@@ -44,7 +44,7 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 // Lançamentos
 Route::get('/lancamentos-combinados/{id_mes}', [LancamentoController::class, 'getCombinedByMes']);
 Route::apiResource('lancamentos', LancamentoController::class);
-Route::put('/lancamentos', [LancamentoController::class, 'update']);
+
 
 //Relatorios
 Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
