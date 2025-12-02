@@ -32,7 +32,6 @@ export interface AcertoData {
     mes_id: number;
 }
 
-// CORREÇÃO: Adicionados campos opcionais para sumir o erro vermelho
 export interface Acerto {
     id_acerto: number;
     id_mensageiro: number;
