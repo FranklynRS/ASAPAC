@@ -4,7 +4,6 @@ import { CategoriaService, Categoria } from '../services/categoriaService';
 import CategoriasFormModal from '../pages/CategoriasFormModal';
 import CategoriasDetailsModal from '../pages/CategoriasDetailsModal';
 import editarIcon from '../assets/editar.png';
-import excluirIcon from '../assets/excluir.png';
 import refreshIcon from '../assets/refresh.png';
 
 interface CategoriaComUsuario extends Categoria {
@@ -154,7 +153,7 @@ const CategoriasPage: React.FC = () => {
               <th>Nome</th>
               <th>Tipo</th>
               <th>Detalhes</th>
-              <th>Editar/Excluir</th>
+              <th>Editar</th>
             </tr>
           </thead>
           <tbody>
@@ -174,9 +173,6 @@ const CategoriasPage: React.FC = () => {
                 <td className="categorias-options">
                   <button className="btn-editar" onClick={() => handleEditarClick(categoria)}>
                     <img src={editarIcon} alt="Editar" />
-                  </button>
-                  <button className="btn-excluir" onClick={() => handleExcluirClick(categoria.id_categoria)}>
-                    <img src={excluirIcon} alt="Excluir" />
                   </button>
                 </td>
               </tr>

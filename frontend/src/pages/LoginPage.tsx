@@ -105,7 +105,6 @@ const LoginPage: React.FC = () => {
             Entrar
           </Button>
         </form>
-        <Link>Esqueceu sua senha? Clique aqui!</Link>
       </RightSection>
     </Container>
   );

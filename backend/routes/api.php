@@ -19,6 +19,10 @@ Route::post('/usuarios', [UsuarioController::class, 'store']);
 Route::post('/usuarios/login', [UsuarioController::class, 'login']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 
+// Rotas Públicas (ou que devem ser acessíveis fora da autenticação)
+Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
+
+
 Route::middleware('jwt.auth')->group(function () {
 
 // Usuário autenticado
@@ -44,11 +48,6 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 // Lançamentos
 Route::get('/lancamentos-combinados/{id_mes}', [LancamentoController::class, 'getCombinedByMes']);
 Route::apiResource('lancamentos', LancamentoController::class);
-
-
-//Relatorios
-Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
-Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
 
 // Categorias
 Route::get('/categorias', [CategoriaController::class, 'index']);

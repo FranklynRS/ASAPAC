@@ -57,34 +57,17 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
     }
   };
 
-  const handleDownloadReport = async (idMes: number, mesNome: string) => {
-    setIsDownloading(true);
-    try {
-      const token = AuthService.getToken();
-      if (!token) throw new Error('Token não encontrado.');
-
-      const response = await fetch(`http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-
-      if (!response.ok) throw new Error('Falha ao gerar o relatório.');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `relatorio-mensal-${mesNome}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-
-    } catch (error) {
-      console.error(error);
-      setError('Erro ao gerar relatório.');
-    } finally {
-      setIsDownloading(false);
+  const handleDownloadReport = (idMes: number, mesNome: string) => {
+    // A rota /api/relatorio/{id_mes}/emitir retorna o HTML
+    const urlRelatorio = `http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`;
+    
+    // Abre a URL em uma nova aba/janela. O JavaScript no Blade fará o window.print()
+    const printWindow = window.open(urlRelatorio, '_blank');
+    
+    if (!printWindow) {
+      alert("Falha ao abrir a janela de impressão. Por favor, verifique se seu navegador está bloqueando pop-ups.");
     }
+    
   };
 
   useEffect(() => {
@@ -146,7 +129,6 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
             <div key={month.id} className="meses-row">
               <span className="meses-row__name">{month.nome}</span>
               <div className="meses-row__right">
-                {/* CORREÇÃO DO NAN AQUI: Adicionado || 0 e conversão Number */}
                 <span className={`meses-row__value meses-row__value--${month.status}`}>
                   {month.status === 'positivo' ? '▲' : '▼'} R$ {Math.abs(Number(month.valor || 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
@@ -157,9 +139,8 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
                     <button 
                         className="meses-row__button-relatorio" 
                         onClick={() => handleDownloadReport(month.id, month.nome)} 
-                        disabled={isDownloading}
                     >
-                        {isDownloading ? 'Gerando...' : 'Relatório'}
+                        Relatório
                     </button>
                 </div>
               </div>

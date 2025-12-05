@@ -126,12 +126,15 @@ class LancamentoController extends Controller
             ->get();
             
         $acertosFormatados = $acertos->flatMap(function($acerto) {
+            
+            $nomeMensageiro = $acerto->mensageiro ? $acerto->mensageiro->nome_mensageiro : 'Mensageiro Desconhecido';
+
             $items = [];
             
             if ((float) $acerto->valor_recebido > 0) {
                 $items[] = [
                     'id_lancamento' => 'acerto_recebido_' . $acerto->id_acerto,
-                    'descricao' => 'Acerto de Recebimento do ' . $acerto->mensageiro->nome_mensageiro,
+                    'descricao' => 'Acerto de Recebimento do ' . $nomeMensageiro,
                     'valor' => (float) $acerto->valor_recebido,
                     'categoria' => [
                         'id_categoria' => null,
@@ -145,7 +148,7 @@ class LancamentoController extends Controller
             if ($totalPagamentosAcerto > 0) {
                 $items[] = [
                     'id_lancamento' => 'acerto_pagamento_' . $acerto->id_acerto,
-                    'descricao' => 'Acerto de Despesas do ' . $acerto->mensageiro->nome_mensageiro,
+                    'descricao' => 'Acerto de Despesas do ' . $nomeMensageiro, 
                     'valor' => $totalPagamentosAcerto,
                     'categoria' => [
                         'id_categoria' => null,
