@@ -12,14 +12,19 @@ class Categoria extends Model
     protected $fillable = [
         'nome_categoria',
         'descricao',
-        'tipo' // booleano: 1 = entrada, 0 = saída
+        'tipo',
+        'id_usuario'
     ];
 
-    public $timestamps = false;
+    public $timestamps = true; 
 
-    // Relacionamento com lançamentos
     public function lancamentos()
     {
         return $this->hasMany(Lancamento::class, 'id_categoria', 'id_categoria');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario', 'id_usuario');
     }
 }

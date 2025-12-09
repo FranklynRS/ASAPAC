@@ -14,16 +14,14 @@ use App\Http\Controllers\RelatorioController;
 Route::get('mensageiros/ativos', [MensageiroController::class, 'getAtivos']);
 Route::apiResource('mensageiros', MensageiroController::class); 
 
-// Categorias
-Route::get('/categorias', [CategoriaController::class, 'index']);
-Route::get('/categorias/{id}', [CategoriaController::class, 'show']);
-Route::post('/categorias', [CategoriaController::class, 'store']);
-Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
-
 // Usuários - Registro e Login
 Route::post('/usuarios', [UsuarioController::class, 'store']);
 Route::post('/usuarios/login', [UsuarioController::class, 'login']);
 Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
+
+// Rotas Públicas (ou que devem ser acessíveis fora da autenticação)
+Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
+
 
 Route::middleware('jwt.auth')->group(function () {
 
@@ -50,10 +48,11 @@ Route::get('/usuarios', [UsuarioController::class, 'index']);
 // Lançamentos
 Route::get('/lancamentos-combinados/{id_mes}', [LancamentoController::class, 'getCombinedByMes']);
 Route::apiResource('lancamentos', LancamentoController::class);
-Route::put('/lancamentos', [LancamentoController::class, 'update']);
 
-//Relatorios
-Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
-Route::get('/relatorios/{id_mes}', [RelatorioController::class, 'show']);
+// Categorias
+Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/categorias/{id}', [CategoriaController::class, 'show']);
+Route::post('/categorias', [CategoriaController::class, 'store']);
+Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
 
 });

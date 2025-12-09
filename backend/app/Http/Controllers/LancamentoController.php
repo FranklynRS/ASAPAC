@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lancamento;
 use App\Models\Categoria;
-use App\Models\Acerto; // Adicione o modelo de Acerto
+use App\Models\Acerto;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\AcertoController;
@@ -24,7 +24,7 @@ class LancamentoController extends Controller
         $request->merge(['valor' => $valor]);
 
         $validated = $request->validate([
-            'descricao' => 'required|string|max:255',
+            'descricao' => 'nullable|string|max:255',
             'valor' => 'required|numeric',
             'id_mes' => 'required|integer|exists:meses,id_mes',
             'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
@@ -56,24 +56,24 @@ class LancamentoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $realId = str_replace('lancamento_', '', $id);
+
         try {
-            $lancamento = Lancamento::findOrFail($id);
+            $lancamento = Lancamento::findOrFail($realId);
         } catch (ModelNotFoundException $e) {
             return response()->json(['erro' => 'Lançamento não encontrado.'], 404);
         }
 
         $validated = $request->validate([
-            'descricao' => 'required|string|max:255',
-            'data_lancamento' => 'required|date',
-            'id_usuario' => 'required|integer|exists:usuarios,id_usuario',
-            'id_mes' => 'required|integer|exists:meses,id_mes',
+            'descricao' => 'nullable|string|max:255',
+            'valor' => 'required|numeric',
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
-            'valor' => 'required|numeric'
         ], [
             'id_categoria.exists' => 'A categoria informada não existe.'
         ]);
 
         $lancamento->update($validated);
+        
         return response()->json($lancamento);
     }
 
@@ -126,12 +126,15 @@ class LancamentoController extends Controller
             ->get();
             
         $acertosFormatados = $acertos->flatMap(function($acerto) {
+            
+            $nomeMensageiro = $acerto->mensageiro ? $acerto->mensageiro->nome_mensageiro : 'Mensageiro Desconhecido';
+
             $items = [];
             
             if ((float) $acerto->valor_recebido > 0) {
                 $items[] = [
                     'id_lancamento' => 'acerto_recebido_' . $acerto->id_acerto,
-                    'descricao' => 'Acerto de Recebimento do ' . $acerto->mensageiro->nome_mensageiro,
+                    'descricao' => 'Acerto de Recebimento do ' . $nomeMensageiro,
                     'valor' => (float) $acerto->valor_recebido,
                     'categoria' => [
                         'id_categoria' => null,
@@ -145,7 +148,7 @@ class LancamentoController extends Controller
             if ($totalPagamentosAcerto > 0) {
                 $items[] = [
                     'id_lancamento' => 'acerto_pagamento_' . $acerto->id_acerto,
-                    'descricao' => 'Acerto de Despesas do ' . $acerto->mensageiro->nome_mensageiro,
+                    'descricao' => 'Acerto de Despesas do ' . $nomeMensageiro, 
                     'valor' => $totalPagamentosAcerto,
                     'categoria' => [
                         'id_categoria' => null,

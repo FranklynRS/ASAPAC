@@ -16,17 +16,17 @@ class MensageiroController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-        'nome_mensageiro' => 'required|string|max:255',
-        'telefone' => 'required|string|max:255',
-        'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro',
-    ]);
+            'nome_mensageiro' => 'required|string|max:40', 
+            'telefone' => 'required|string|max:255',
+            'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro',
+        ]);
     
-    if ($validator->fails()) {
-        return response()->json([
-            'message' => 'Erro de validação',
-            'errors' => $validator->errors()
-        ], 422);
-    }
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
         $mensageiro = Mensageiro::create($validator->validated());
 
@@ -43,7 +43,7 @@ class MensageiroController extends Controller
         $mensageiro = Mensageiro::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'nome_mensageiro' => 'required|string|max:255',
+            'nome_mensageiro' => 'required|string|max:40',
             'telefone' => 'required|string|max:255',
             'codigo_mensageiro' => 'required|string|max:255|unique:mensageiros,codigo_mensageiro,' . $mensageiro->id_mensageiro . ',id_mensageiro',
             'status' => 'boolean',

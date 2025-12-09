@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import './MensageirosDetailsModal.scss';
 import { Mensageiro } from '../services/mensageirosService';
 
-interface MensageiroDetailsModalProps {
+interface MensageirosDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   mensageiro: Mensageiro | null;
@@ -11,7 +11,7 @@ interface MensageiroDetailsModalProps {
 
 Modal.setAppElement('#root');
 
-const MensageiroDetailsModal: React.FC<MensageiroDetailsModalProps> = ({ isOpen, onClose, mensageiro }) => {
+const MensageirosDetailsModal: React.FC<MensageirosDetailsModalProps> = ({ isOpen, onClose, mensageiro }) => {
   if (!isOpen || !mensageiro) return null;
 
   const statusText = mensageiro.status ? 'Ativo' : 'Inativo';
@@ -38,4 +38,4 @@ const MensageiroDetailsModal: React.FC<MensageiroDetailsModalProps> = ({ isOpen,
   );
 };
 
-export default MensageiroDetailsModal;
+export default MensageirosDetailsModal;

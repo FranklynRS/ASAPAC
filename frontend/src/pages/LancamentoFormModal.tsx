@@ -143,7 +143,6 @@ const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClo
               type="text"
               value={descricao}
               onChange={e => setDescricao(e.target.value)}
-              required
             />
           </div>
           

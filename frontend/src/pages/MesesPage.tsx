@@ -30,7 +30,7 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
       setMeses(data);
       setError(null);
     } catch (err) {
-      setError('Erro ao carregar os meses. Por favor, tente novamente.');
+      setError('Erro ao carregar os meses.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -57,38 +57,17 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
     }
   };
 
-  const handleDownloadReport = async (idMes: number, mesNome: string) => {
-    setIsDownloading(true);
-    try {
-      const token = AuthService.getToken();
-      if (!token) throw new Error('Token de autenticação não encontrado.');
-
-      const response = await fetch(`http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Falha ao gerar o relatório.');
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `relatorio-mensal-${mesNome}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-
-    } catch (error) {
-      console.error(error);
-      setError('Erro ao gerar relatório. Tente novamente.');
-    } finally {
-      setIsDownloading(false);
+  const handleDownloadReport = (idMes: number, mesNome: string) => {
+    // A rota /api/relatorio/{id_mes}/emitir retorna o HTML
+    const urlRelatorio = `http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`;
+    
+    // Abre a URL em uma nova aba/janela. O JavaScript no Blade fará o window.print()
+    const printWindow = window.open(urlRelatorio, '_blank');
+    
+    if (!printWindow) {
+      alert("Falha ao abrir a janela de impressão. Por favor, verifique se seu navegador está bloqueando pop-ups.");
     }
+    
   };
 
   useEffect(() => {
@@ -104,16 +83,7 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
     fetchMeses();
   };
 
-  if (isLoading) {
-    return (
-      <div className="meses-container">
-        <h2 className="meses-header">Histórico dos Meses</h2>
-        <div className="meses-content">
-          <p>Carregando dados...</p>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <div className="meses-container"><p>Carregando dados...</p></div>;
 
   if (error) {
     return (
@@ -133,8 +103,6 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
         <div className="cadastro-mes-container">
           <input 
             type="month" 
-            id="mes" 
-            name="mes"
             value={newMonth}
             onChange={(e) => setNewMonth(e.target.value)}
           />
@@ -162,7 +130,7 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
               <span className="meses-row__name">{month.nome}</span>
               <div className="meses-row__right">
                 <span className={`meses-row__value meses-row__value--${month.status}`}>
-                  {month.status === 'positivo' ? '▲' : '▼'} R${Math.abs(month.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  {month.status === 'positivo' ? '▲' : '▼'} R$ {Math.abs(Number(month.valor || 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </span>
                 <div className="meses-row-buttons">
                     <button className="meses-row__button" onClick={() => onLancamentosClick({ id: month.id, nome: month.nome })}>
@@ -171,18 +139,13 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
                     <button 
                         className="meses-row__button-relatorio" 
                         onClick={() => handleDownloadReport(month.id, month.nome)} 
-                        disabled={isDownloading}
                     >
-                        {isDownloading ? 'Gerando...' : 'Relatório'}
+                        Relatório
                     </button>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="meses-scroll-button">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-320 280-520l56-56 144 144 144-144 56 56-200 200ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
         </div>
       </div>
     </div>

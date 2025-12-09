@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AcertoEditModal.scss';
 import { AcertosService, Acerto, Mensageiro } from '../services/acertosService';
-import { AuthService } from '../services/auth';
 
 interface AcertoEditModalProps {
   isOpen: boolean;
@@ -25,50 +24,71 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
 
   useEffect(() => {
     if (isOpen && acerto) {
-      setValorRecebido(acerto.valor_recebido);
-      setPagamento(acerto.pagamento);
-      setGasolina(acerto.gasolina);
-      setHotel(acerto.hotel);
-      setAlimentacao(acerto.alimentacao);
-      setOutros(acerto.outros);
+      setValorRecebido(Number(acerto.valor_recebido));
+      setPagamento(Number(acerto.pagamento));
+      setGasolina(Number(acerto.gasolina));
+      setHotel(Number(acerto.hotel));
+      setAlimentacao(Number(acerto.alimentacao));
+      setOutros(Number(acerto.outros));
+      
+      if (acerto.id_mensageiro) {
+          setSelectedMensageiroId(Number(acerto.id_mensageiro));
+      }
 
-      const fetchData = async () => {
+      const fetchMensageiros = async () => {
         try {
           const fetchedMensageiros = await AcertosService.fetchMensageiros();
           setMensageiros(fetchedMensageiros);
+          setError(null);
         } catch (err) {
           console.error(err);
-          setError('Erro ao carregar dados do formulário.');
+          setError('Erro ao carregar lista de mensageiros.');
         }
       };
-      fetchData();
+      fetchMensageiros();
     }
   }, [isOpen, acerto]);
 
   useEffect(() => {
-    const totalDespesas = gasolina + hotel + alimentacao + outros;
-    setSaldo(valorRecebido - pagamento - totalDespesas);
+    const totalDespesas = Number(gasolina) + Number(hotel) + Number(alimentacao) + Number(outros);
+    setSaldo(Number(valorRecebido) - Number(pagamento) - totalDespesas);
   }, [valorRecebido, pagamento, gasolina, hotel, alimentacao, outros]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    console.log('Tentando salvar acerto. ID:', acerto?.id_acerto);
+    
+    if (!acerto || !acerto.id_acerto) {
+        setError('Erro: ID do acerto inválido ou não encontrado.');
+        setIsLoading(false);
+        return;
+    }
+
     if (!acerto) {
-      setError('Acerto inválido.');
-      setIsLoading(false);
-      return;
+        setIsLoading(false);
+        return;
     }
     
+    if (!selectedMensageiroId) {
+        setError('Selecione um mensageiro.');
+        setIsLoading(false);
+        return;
+    }
+
     try {
       const acertosData = {
-        id_mensageiro: selectedMensageiroId || acerto.id_mensageiro,
+        id_mensageiro: selectedMensageiroId,
         valor_recebido: valorRecebido,
         pagamento: pagamento,
         gasolina: gasolina,
         hotel: hotel,
         alimentacao: alimentacao,
         outros: outros,
+        mes_id: acerto.mes_id || 0,
+        id_usuario: acerto.id_usuario || 0
       };
       
       await AcertosService.updateAcerto(acerto.id_acerto, acertosData);
@@ -76,7 +96,7 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
       onClose();
     } catch (err) {
       console.error(err);
-      setError('Erro ao registrar acerto.');
+      setError('Erro ao atualizar acerto.');
     } finally {
       setIsLoading(false);
     }
@@ -91,51 +111,58 @@ const AcertoEditModal: React.FC<AcertoEditModalProps> = ({ isOpen, onClose, acer
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onClose}>&times;</button>
         <h2 className="modal-title">Editar Acerto</h2>
+        
         {error && <p className="error-message">{error}</p>}
+        
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
               <label>Selecionar Mensageiro</label>
               <select
-                value={selectedMensageiroId || acerto.id_mensageiro || ''}
+                value={selectedMensageiroId || ''}
                 onChange={e => setSelectedMensageiroId(Number(e.target.value))}
                 required
               >
                 <option value="">Escolher</option>
                 {mensageiros.map(m => (
-                  <option key={m.id_mensageiro} value={m.id_mensageiro}>{m.nome_mensageiro}</option>
+                  <option key={m.id_mensageiro} value={m.id_mensageiro}>
+                    {m.nome_mensageiro}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Valor Recebido:</label>
-              <input type="number" value={valorRecebido} onChange={e => setValorRecebido(Number(e.target.value))} />
+              <input type="number" step="0.01" value={valorRecebido} onChange={e => setValorRecebido(Number(e.target.value))} />
             </div>
             <div className="form-group">
               <label>Pagamento:</label>
-              <input type="number" value={pagamento} onChange={e => setPagamento(Number(e.target.value))} />
+              <input type="number" step="0.01" value={pagamento} onChange={e => setPagamento(Number(e.target.value))} />
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Gasolina:</label>
-              <input type="number" value={gasolina} onChange={e => setGasolina(Number(e.target.value))} />
+              <input type="number" step="0.01" value={gasolina} onChange={e => setGasolina(Number(e.target.value))} />
             </div>
             <div className="form-group">
               <label>Hotel:</label>
-              <input type="number" value={hotel} onChange={e => setHotel(Number(e.target.value))} />
+              <input type="number" step="0.01" value={hotel} onChange={e => setHotel(Number(e.target.value))} />
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Alimentação:</label>
-              <input type="number" value={alimentacao} onChange={e => setAlimentacao(Number(e.target.value))} />
+              <input type="number" step="0.01" value={alimentacao} onChange={e => setAlimentacao(Number(e.target.value))} />
             </div>
             <div className="form-group">
               <label>Outros:</label>
-              <input type="number" value={outros} onChange={e => setOutros(Number(e.target.value))} />
+              <input type="number" step="0.01" value={outros} onChange={e => setOutros(Number(e.target.value))} />
             </div>
           </div>
           

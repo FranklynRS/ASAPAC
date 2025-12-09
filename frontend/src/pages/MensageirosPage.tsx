@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './MensageirosPage.scss';
 import { MensageirosService, Mensageiro } from '../services/mensageirosService';
-import MensageiroFormModal from '../pages/MensageiroFormModal';
+import MensageirosFormModal from '../pages/MensageirosFormModal'; 
 import MensageiroDetailsModal from '../pages/MensageirosDetailsModal';
 import editarIcon from '../assets/editar.png';
 import refreshIcon from '../assets/refresh.png';
@@ -16,6 +16,7 @@ const MensageirosPage: React.FC = () => {
   const [mensageiroToEdit, setMensageiroToEdit] = useState<Mensageiro | null>(null);
   const [mensageiroToView, setMensageiroToView] = useState<Mensageiro | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchMensageiros = async () => {
     setIsLoading(true);
@@ -70,6 +71,10 @@ const MensageirosPage: React.FC = () => {
 
   const handleMensageiroSaved = () => {
     fetchMensageiros();
+    setSuccessMessage('Mensageiro salvo com sucesso!');
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3000);
   };
 
   if (isLoading) {
@@ -82,6 +87,12 @@ const MensageirosPage: React.FC = () => {
   
   return (
     <div className="mensageiros-container">
+      {successMessage && (
+        <div className="success-popup">
+            {successMessage}
+        </div>
+      )}
+
       <div className="mensageiros-header-row">
         <h1>Lista de Mensageiros</h1>
         <button className="btn-novo-mensageiro" onClick={handleNovoMensageiroClick}>Novo Mensageiro</button>
@@ -135,7 +146,7 @@ const MensageirosPage: React.FC = () => {
         </table>
       </div>
 
-      <MensageiroFormModal
+      <MensageirosFormModal
         isOpen={isFormModalOpen}
         onClose={handleCloseFormModal}
         onMensageiroSaved={handleMensageiroSaved}

@@ -26,7 +26,23 @@ const CategoriasFormModal: React.FC<CategoriaFormModalProps> = ({ isOpen, onClos
       setDescricao('');
       setTipo('');
     }
-  }, [categoriaToEdit]);
+  }, [categoriaToEdit, isOpen]);
+
+  const handleNomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    value = value.replace(/[0-9]/g, '');
+    
+    if (value.length <= 40) {
+      setNomeCategoria(value);
+    }
+  };
+
+  const handleDescricaoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= 200) {
+      setDescricao(value);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +63,9 @@ const CategoriasFormModal: React.FC<CategoriaFormModalProps> = ({ isOpen, onClos
       }
       onCategoriaSaved();
       onClose();
-    } catch (err) {
-      setError('Erro ao salvar categoria. Verifique os dados.');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Erro ao salvar categoria. Verifique os dados.';
+      setError(msg);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -62,7 +79,9 @@ const CategoriasFormModal: React.FC<CategoriaFormModalProps> = ({ isOpen, onClos
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <button className="modal-close-btn" onClick={onClose}>&times;</button>
         <h2 className="modal-title">{categoriaToEdit ? 'Editar Categoria' : 'Nova Categoria'}</h2>
+        
         {error && <p className="error-message">{error}</p>}
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="nome_categoria">Nome da Categoria:</label>
@@ -70,18 +89,26 @@ const CategoriasFormModal: React.FC<CategoriaFormModalProps> = ({ isOpen, onClos
               type="text"
               id="nome_categoria"
               value={nomeCategoria}
-              onChange={(e) => setNomeCategoria(e.target.value)}
+              onChange={handleNomeChange}
+              maxLength={40}
+              placeholder="Ex: Transporte (Sem números)"
               required
             />
+            <small className="char-count">{nomeCategoria.length}/40</small>
           </div>
+          
           <div className="form-group">
             <label htmlFor="descricao">Descrição:</label>
             <textarea
               id="descricao"
               value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
+              onChange={handleDescricaoChange}
+              maxLength={200}
+              rows={4}
             />
+            <small className="char-count">{descricao.length}/200</small>
           </div>
+          
           <div className="form-group">
             <label htmlFor="tipo">Tipo:</label>
             <select id="tipo" value={tipo} onChange={(e) => setTipo(e.target.value as '0' | '1' | '')} required>
@@ -90,6 +117,7 @@ const CategoriasFormModal: React.FC<CategoriaFormModalProps> = ({ isOpen, onClos
               <option value="0">Gasto</option>
             </select>
           </div>
+          
           <div className="form-actions">
             <button type="submit" className="btn-gravar" disabled={isLoading}>
               {isLoading ? 'Salvando...' : 'Gravar'}
