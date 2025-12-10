@@ -8,11 +8,31 @@ use Illuminate\Support\Facades\Validator;
 
 class MensageiroController extends Controller
 {
-    public function index()
-    {
-        return Mensageiro::all();
-    }
 
+    public function index(Request $request)
+    {
+        $query = Mensageiro::query();
+        if ($request->has('nome_mensageiro')) {
+            $query->where('nome_mensageiro', 'like', '%' . $request->query('nome_mensageiro') . '%');
+        }
+
+        if ($request->has('status') && $request->status !== null && $request->status !== '') {
+            $status = $request->status === 'ativo' ? 1 : 0;
+            $query->where('status', $status);
+        }
+
+        if ($request->has('created_by') && $request->created_by) {
+        }
+
+        if ($request->has('ordem') && $request->ordem === 'antigo') {
+            $query->orderBy('id_mensageiro', 'asc');
+        } else {
+            $query->orderBy('id_mensageiro', 'desc');
+        }
+
+        return response()->json($query->get());
+    }
+    
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

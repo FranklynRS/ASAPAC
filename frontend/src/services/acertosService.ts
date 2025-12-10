@@ -217,7 +217,7 @@ async updateLancamento(id: number | string, lancamentoData: Partial<LancamentoDa
         if (!token) throw new Error('Token de autenticação não encontrado.');
         const realId = String(id).split('_').pop();
 
-        console.log(`Atualizando lançamento. ID Original: ${id} | ID Enviado: ${realId}`); // Log para debug
+        console.log(`Atualizando lançamento. ID Original: ${id} | ID Enviado: ${realId}`); 
 
         const response = await fetch(`http://127.0.0.1:8000/api/lancamentos/${realId}`, {
             method: 'PUT',

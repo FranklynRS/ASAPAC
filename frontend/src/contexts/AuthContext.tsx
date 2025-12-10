@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     checkAuthStatus();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
   const login = async (data: LoginData) => {
     setIsLoading(true);
@@ -105,9 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
-    // TEMPORÁRIO: Sempre autenticado para testar dashboard sem backend
-    // isAuthenticated: true,
-    // COM VALIDAÇÃO: Descomente a linha abaixo e comente a de cima
+
     isAuthenticated: !!user,
     isLoading,
     login,

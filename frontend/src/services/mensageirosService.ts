@@ -9,15 +9,30 @@ export interface Mensageiro {
   created_at: string;
 }
 
+export interface MensageiroFilters {
+    search?: string;
+    status?: string;
+    created_by?: string;
+    ordem?: string;
+}
+
 export const MensageirosService = {
-  async fetchMensageiros(): Promise<Mensageiro[]> {
+  async fetchMensageiros(filters?: MensageiroFilters): Promise<Mensageiro[]> {
     try {
       const token = AuthService.getToken();
       if (!token) {
         throw new Error('Token de autenticação não encontrado.');
       }
       
-      const response = await fetch('http://127.0.0.1:8000/api/mensageiros', {
+      const queryParams = new URLSearchParams();
+      if (filters) {
+          if (filters.search) queryParams.append('nome_mensageiro', filters.search);
+          if (filters.status) queryParams.append('status', filters.status);
+          if (filters.created_by) queryParams.append('created_by', filters.created_by);
+          if (filters.ordem) queryParams.append('ordem', filters.ordem);
+      }
+
+      const response = await fetch(`http://127.0.0.1:8000/api/mensageiros?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -38,7 +53,7 @@ export const MensageirosService = {
     }
   },
 
-  async createMensageiro(mensageiroData: { nome_mensageiro: string; codigo_mensageiro: string; telefone: string }): Promise<Mensageiro> {
+  async createMensageiro(mensageiroData: { nome_mensageiro: string; codigo_mensageiro: string; telefone: string; status?: boolean }): Promise<Mensageiro> {
     try {
       const token = AuthService.getToken();
       if (!token) {
@@ -68,7 +83,7 @@ export const MensageirosService = {
     }
   },
 
-  async updateMensageiro(id: number, mensageiroData: { nome_mensageiro: string; codigo_mensageiro: string; telefone: string }): Promise<Mensageiro> {
+  async updateMensageiro(id: number, mensageiroData: { nome_mensageiro: string; codigo_mensageiro: string; telefone: string; status?: boolean }): Promise<Mensageiro> {
     try {
       const token = AuthService.getToken();
       if (!token) {

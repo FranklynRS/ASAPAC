@@ -11,6 +11,7 @@ export interface LoginResponse {
     id_usuario: number;
     nome_usuario: string;
     email_usuario: string;
+    foto_usuario?: string;
   };
   token: string;
 }
@@ -22,13 +23,69 @@ export interface RegisterData {
 }
 
 export class AuthService {
+  
+  static getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  static setToken(token: string) {
+    localStorage.setItem('token', token);
+  }
+
+  static getUser() {
+    return this.getCurrentUser();
+  }
+
+  static getCurrentUser() {
+    const userStr = localStorage.getItem('usuario'); 
+    if (userStr) {
+        try {
+            return JSON.parse(userStr);
+        } catch (e) {
+            return null;
+        }
+    }
+    return null;
+  }
+
+  static setUser(user: any) {
+    localStorage.setItem('usuario', JSON.stringify(user));
+  }
+
+  static getUserIdFromToken(): number | null {
+    try {
+      const user = this.getCurrentUser();
+      if (user && user.id_usuario) {
+        return user.id_usuario;
+      }
+      
+      const token = this.getToken();
+      if (!token) return null;
+
+      const payloadBase64 = token.split('.')[1];
+      const decodedPayload = atob(payloadBase64);
+      const payload = JSON.parse(decodedPayload);
+
+      return payload.sub || payload.id_usuario || null;
+    } catch (e) {
+      console.error("Erro ao obter ID do usuário:", e);
+      return null;
+    }
+  }
+
+  static isAuthenticated(): boolean {
+    const token = this.getToken();
+    const user = this.getCurrentUser();
+    return !!(token && user);
+  }
+
   static async login(data: LoginData): Promise<LoginResponse> {
     try {
       const response = await apiClient.post('/usuarios/login', data);
       
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+        this.setToken(response.data.token);
+        this.setUser(response.data.usuario);
       }
       
       return response.data;
@@ -42,8 +99,8 @@ export class AuthService {
       const response = await apiClient.post('/usuarios', data);
       
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+        this.setToken(response.data.token);
+        this.setUser(response.data.usuario);
       }
       
       return response.data;
@@ -59,9 +116,9 @@ export class AuthService {
 
   static async logout(): Promise<void> {
     try {
-      await apiClient.post('/usuarios/logout');
+      await apiClient.post('/usuarios/logout'); 
     } catch (error) {
-      console.warn('Erro ao fazer logout na API:', error);
+      console.warn('Logout API warning:', error);
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
@@ -72,55 +129,11 @@ export class AuthService {
     try {
       const response = await apiClient.post('/usuarios/refresh');
       const newToken = response.data.token;
-      
-      localStorage.setItem('token', newToken);
+      this.setToken(newToken);
       return newToken;
     } catch (error: any) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
-      throw new Error('Sessão expirada. Faça login novamente.');
-    }
-  }
-
-  static async getProfile(): Promise<any> {
-    try {
-      const response = await apiClient.get('/usuarios/me');
-      return response.data;
-    } catch (error: any) {
-      throw new Error('Erro ao buscar dados do usuário');
-    }
-  }
-
-  static getCurrentUser() {
-    const userStr = localStorage.getItem('usuario');
-    return userStr ? JSON.parse(userStr) : null;
-  }
-
-  static getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  static isAuthenticated(): boolean {
-    const token = this.getToken();
-    const user = this.getCurrentUser();
-    return !!(token && user);
-  }
-
-  static getUserIdFromToken(): number | null {
-    try {
-      const token = this.getToken();
-      if (!token) {
-        return null;
-      }
-
-      const payloadBase64 = token.split('.')[1];
-      const decodedPayload = atob(payloadBase64);
-      const payload = JSON.parse(decodedPayload);
-
-      return payload.sub || null;
-    } catch (e) {
-      console.error("Erro ao decodificar token:", e);
-      return null;
+      this.logout();
+      throw new Error('Sessão expirada.');
     }
   }
 }
