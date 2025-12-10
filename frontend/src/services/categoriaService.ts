@@ -3,20 +3,38 @@ import { AuthService } from './auth';
 export interface Categoria {
   id_categoria: number;
   nome_categoria: string;
-  descricao?: string |null;
+  descricao?: string | null;
   created_at: string;
-  created_by_user_name: string;
+  created_by_user_name?: string;
+  usuario?: { nome_usuario: string };
   tipo: 0 | 1;
 }
 
+export interface CategoriaFilters {
+    search?: string;
+    tipo?: string;
+    created_by?: string;
+    ordem?: string;
+}
+
 export const CategoriaService = {
-  async fetchCategorias(): Promise<Categoria[]> {
+  async fetchCategorias(filters?: CategoriaFilters): Promise<Categoria[]> {
     try {
       const token = AuthService.getToken();
       if (!token) throw new Error('Token de autenticação não encontrado.');
-      const response = await fetch('http://127.0.0.1:8000/api/categorias', {
+
+      const queryParams = new URLSearchParams();
+      if (filters) {
+          if (filters.search) queryParams.append('nome_categoria', filters.search);
+          if (filters.tipo) queryParams.append('tipo', filters.tipo);
+          if (filters.created_by) queryParams.append('created_by', filters.created_by);
+          if (filters.ordem) queryParams.append('ordem', filters.ordem);
+      }
+
+      const response = await fetch(`http://127.0.0.1:8000/api/categorias?${queryParams.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
+      
       if (!response.ok) throw new Error('Falha ao buscar categorias.');
       return await response.json();
     } catch (error) {

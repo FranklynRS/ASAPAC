@@ -8,12 +8,33 @@ use App\Models\Categoria;
 
 class CategoriaController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        return Categoria::with('usuario')->get();
+        $query = Categoria::with('usuario');
+
+        if ($request->has('nome_categoria')) {
+            $query->where('nome_categoria', 'like', '%' . $request->query('nome_categoria') . '%');
+        }
+
+        if ($request->has('tipo') && $request->tipo !== null && $request->tipo !== '') {
+            $query->where('tipo', $request->tipo);
+        }
+
+        if ($request->has('created_by') && $request->created_by) {
+            $query->where('id_usuario', $request->created_by);
+        }
+
+        if ($request->has('ordem') && $request->ordem === 'antigo') {
+            $query->orderBy('id_categoria', 'asc');
+        } else {
+            $query->orderBy('id_categoria', 'desc');
+        }
+
+        return response()->json($query->get());
     }
 
-public function store(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [ 
             'nome_categoria' => 'required|string|max:40',

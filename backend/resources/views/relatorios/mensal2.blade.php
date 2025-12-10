@@ -4,31 +4,40 @@
     <meta charset="UTF-8">
     <title>Relatório Financeiro Modelo 2</title>
     <style>
-        html, body {
-            height: 100%;
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+
+        html {
+            box-sizing: border-box;
+        }
+        
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        body {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            font-size: 11px; 
-        }
-        
-        body {
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            border: 2px solid #000;
-            min-height: 98%;
+            font-size: 11px;
+            color: #000;
+            background-color: #525659; 
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 20px;
+            padding-bottom: 20px;
         }
         
-        .content-wrapper {
-            flex-grow: 1;
+        .container {
+            background-color: white;
+            width: 210mm;
+            min-height: 297mm; 
+            border: 2px solid #000; 
+            padding: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5); 
             display: flex;
             flex-direction: column;
         }
@@ -36,15 +45,17 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            border-spacing: 0;
         }
         td, th {
             border: 1px solid #000;
-            padding: 4px;
+            padding: 3px 5px;
         }
 
         .header-table {
             text-align: center;
             background-color: #F1F1F1;
+            margin-bottom: 2px;
         }
         .header-table td { font-weight: bold; }
         .logo-cell { width: 80px; background-color: #fff; }
@@ -52,15 +63,21 @@
         .title-main { font-size: 14px; text-transform: uppercase; }
         .bg-beige { background-color: #FDF5E6; }
         
-        .main-table { margin-top: 2px; flex-grow: 1; }
+        .content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-table { 
+            border-top: none; 
+            width: 100%;
+        }
         .main-table th {
             background-color: #FDF5E6;
             text-transform: uppercase;
             font-size: 10px;
-        }
-        .main-table td {
-            border: 1px solid #666;
-            padding: 3px 5px;
+            padding: 5px;
         }
         
         .col-item { width: 30px; text-align: center; }
@@ -72,13 +89,17 @@
         .row-despesa { background-color: #FDE9D9; }
         
         .bottom-section-wrapper {
+            width: 100%;
+            border: 1px solid #000;
+            border-top: none; 
             margin-top: auto; 
-            border-top: 2px solid #000;
         }
 
         .totals-table td {
             font-weight: bold;
             background-color: #F1F1F1;
+            border-top: 2px solid #000;
+            border-bottom: 1px solid #000;
         }
 
         .bottom-split {
@@ -87,61 +108,92 @@
         }
 
         .bottom-left {
-            width: 60%; 
-            border-right: 2px solid #000;
+            width: 60%;
+            border-right: 1px solid #000;
         }
 
         .bottom-right {
-            width: 40%; 
+            width: 40%;
             display: flex;
             flex-direction: column;
         }
 
+        .blocos-table { border: none; }
         .blocos-table th {
-            background-color: #EBF1DE; 
+            background-color: #EBF1DE;
             font-size: 10px;
             font-weight: bold;
             text-align: center;
+            border: 1px solid #000;
         }
         .blocos-table td {
-            height: 18px; 
+            height: 16px;
+            border: 1px solid #000;
         }
-        .td-label { background-color: #EBF1DE; font-weight: bold; width: 80px; }
-        .td-de-a { width: 30px; text-align: center; background-color: #F1F1F1; }
+        .td-label { background-color: #EBF1DE; font-weight: bold; width: 70px; font-size: 10px; }
+        .td-de-a { width: 25px; text-align: center; background-color: #F1F1F1; font-size: 10px; font-weight: bold; }
 
+        .saldos-table { border: none; }
         .saldos-table th {
             background-color: #EBF1DE;
             font-size: 10px;
             font-weight: bold;
             text-align: center;
+            border: 1px solid #000;
         }
         .saldos-table td {
             text-align: right;
             font-weight: bold;
+            border: 1px solid #000;
         }
 
         .assinaturas-container {
-            flex-grow: 1; 
+            margin-top: 10px;
+            padding: 5px 20px;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end; 
-            padding: 10px;
+            justify-content: flex-end;
         }
 
+        .assinatura-block { margin-bottom: 15px; }
+
         .assinatura-line {
-            margin-top: 25px;
             border-top: 1px solid #000;
             text-align: center;
+            font-size: 9px;
+            padding-top: 2px;
+        }
+
+        .x-mark {
+            font-weight: bold; 
             font-size: 10px;
+            margin-bottom: 2px;
         }
 
         .bg-green { background-color: #D8E4BC; }
 
         @media print {
+            body { 
+                background-color: white; 
+                display: block; 
+                padding: 0; 
+                margin: 0; 
+            }
+            .container { 
+                width: 100%;
+                min-height: auto; 
+                box-shadow: none; 
+                border: 2px solid #000;
+                margin: 0; 
+                padding: 0;
+            }
+            
             .bg-beige { background-color: #FDF5E6 !important; -webkit-print-color-adjust: exact; }
             .bg-green { background-color: #D8E4BC !important; -webkit-print-color-adjust: exact; }
             .row-receita { background-color: #EBF1DE !important; -webkit-print-color-adjust: exact; }
             .row-despesa { background-color: #FDE9D9 !important; -webkit-print-color-adjust: exact; }
+            .totals-table td { background-color: #F1F1F1 !important; -webkit-print-color-adjust: exact; }
             .blocos-table th, .td-label, .saldos-table th { background-color: #EBF1DE !important; -webkit-print-color-adjust: exact; }
         }
     </style>
@@ -150,28 +202,28 @@
 
 <div class="container">
     
-    <div class="content-wrapper">
-        <table class="header-table">
-            <tr>
-                <td rowspan="2" class="logo-cell">
-                    <img src="{{ asset('assets/img/logoasapac.png') }}" alt="Logo" class="logo">
-                </td>
-                <td colspan="4" class="title-main">
-                    ASSOCIAÇÃO DE AMPARO A PACIENTES COM CÂNCER<br>
-                    RELATÓRIO FINANCEIRO MENSAL DO CAIXA
-                </td>
-            </tr>
-            <tr class="bg-beige">
-                <td width="10%">FILIAL</td>
-                <td width="40%">GOVERNADOR VALADARES-MG</td>
-                <td width="15%">MÊS/ANO</td>
-                <td width="35%">{{ $tituloMes }} / {{ $ano }}</td>
-            </tr>
-            <tr>
-                <td colspan="5" class="bg-beige title-main" style="padding: 5px;">PRESTAÇÃO DE CONTAS MENSAL DO CAIXA</td>
-            </tr>
-        </table>
+    <table class="header-table">
+        <tr>
+            <td rowspan="2" class="logo-cell">
+                <img src="{{ asset('assets/img/logoasapac.png') }}" alt="Logo" class="logo">
+            </td>
+            <td colspan="4" class="title-main">
+                ASSOCIAÇÃO DE AMPARO A PACIENTES COM CÂNCER<br>
+                RELATÓRIO FINANCEIRO MENSAL DO CAIXA
+            </td>
+        </tr>
+        <tr class="bg-beige">
+            <td width="10%">FILIAL</td>
+            <td width="40%">GOVERNADOR VALADARES-MG</td>
+            <td width="15%">MÊS/ANO</td>
+            <td width="35%">{{ $tituloMes }} / {{ $ano }}</td>
+        </tr>
+        <tr>
+            <td colspan="5" class="bg-beige title-main" style="padding: 5px;">PRESTAÇÃO DE CONTAS MENSAL DO CAIXA</td>
+        </tr>
+    </table>
 
+    <div class="content-wrapper">
         <table class="main-table">
             <thead>
                 <tr>
@@ -225,7 +277,7 @@
                 </tr>
                 @endif
 
-                @for($i = 0; $i < (28 - $itemCount); $i++)
+                @for($i = 0; $i < (35 - $itemCount); $i++)
                 <tr>
                     <td class="col-item">&nbsp;</td>
                     <td class="col-hist"></td>
@@ -259,20 +311,24 @@
                     <tr>
                         <td rowspan="2" class="td-label">RECIBOS</td>
                         <td class="td-de-a">DE</td>
-                        <td></td> <td class="td-de-a">A</td>
+                        <td></td>
+                        <td class="td-de-a">A</td>
                     </tr>
                     <tr>
                         <td class="td-de-a">DE</td>
-                        <td></td> <td class="td-de-a">A</td>
+                        <td></td>
+                        <td class="td-de-a">A</td>
                     </tr>
                     <tr>
                         <td rowspan="2" class="td-label">RIFAS</td>
                         <td class="td-de-a">DE</td>
-                        <td></td> <td class="td-de-a">A</td>
+                        <td></td>
+                        <td class="td-de-a">A</td>
                     </tr>
                     <tr>
                         <td class="td-de-a">DE</td>
-                        <td></td> <td class="td-de-a">A</td>
+                        <td></td>
+                        <td class="td-de-a">A</td>
                     </tr>
                 </table>
             </div>
@@ -280,7 +336,8 @@
             <div class="bottom-right">
                 <table class="saldos-table">
                     <tr>
-                        <th colspan="2">0,00</th> <th colspan="2">0,00</th>
+                        <th colspan="2">0,00</th>
+                        <th colspan="2">0,00</th>
                     </tr>
                     <tr>
                         <th colspan="3" style="text-align: right;">SALDO PERÍODO ANTERIOR</th>
@@ -293,17 +350,17 @@
                 </table>
 
                 <div class="assinaturas-container">
-                    <div style="font-weight: bold; margin-bottom: 20px;">X</div>
                     
-                    <div class="assinatura-line">
-                        Representante da Filial
+                    <div class="assinatura-block">
+                        <div class="x-mark">X</div>
+                        <div class="assinatura-line">Representante da Filial</div>
                     </div>
                     
-                    <div style="font-weight: bold; margin-top: 5px; margin-bottom: 20px;">X</div>
+                    <div class="assinatura-block">
+                        <div class="x-mark">X</div>
+                        <div class="assinatura-line">Representante da Matriz</div>
+                    </div>
 
-                    <div class="assinatura-line">
-                        Representante da Matriz
-                    </div>
                 </div>
             </div>
 

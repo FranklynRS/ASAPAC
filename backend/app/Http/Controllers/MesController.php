@@ -26,9 +26,27 @@ class MesController extends Controller
         return response()->json($mes);
     }
 
-    public function getMesesComSaldos()
+    public function getMesesComSaldos(Request $request)
     {
-        $meses = Mes::with(['lancamentos.categoria', 'acertos'])->get()->map(function ($mes) {
+        $mesesTraduzidos = [
+            1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril',
+            5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto',
+            9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'
+        ];
+
+        $query = Mes::with(['lancamentos.categoria', 'acertos']);
+
+        if ($request->has('ano') && $request->ano) {
+            $query->where('ano_mes', 'like', '%' . $request->ano . '%');
+        }
+
+        if ($request->has('ordem') && $request->ordem === 'antigo') {
+            $query->orderBy('ano_mes', 'asc');
+        } else {
+            $query->orderBy('ano_mes', 'desc');
+        }
+
+        $meses = $query->get()->map(function ($mes) use ($mesesTraduzidos) {
             
             $receita = 0;
             $despesa = 0;
@@ -57,10 +75,11 @@ class MesController extends Controller
             $saldoFinal = $receita - $despesa;
             $status = $saldoFinal >= 0 ? 'positivo' : 'negativo';
 
-            setlocale(LC_TIME, 'pt_BR', 'pt_BR.utf-8', 'portuguese');
             try {
                 $dt = Carbon::createFromFormat('Y-m', $mes->ano_mes);
-                $nomeFormatado = ucfirst($dt->translatedFormat('F/Y'));
+                $nomeMes = $mesesTraduzidos[$dt->format('n')];
+                $ano = $dt->format('Y');
+                $nomeFormatado = $nomeMes . '/' . $ano;
             } catch (\Exception $e) {
                 $nomeFormatado = $mes->ano_mes;
             }
@@ -69,13 +88,17 @@ class MesController extends Controller
                 'id_mes' => $mes->id_mes,
                 'ano_mes' => $mes->ano_mes,
                 'nome' => $nomeFormatado, 
-                
                 'saldo' => round($saldoFinal, 2), 
-                
                 'status' => $status
             ];
-        })->sortByDesc('ano_mes')->values();
+        });
 
-        return response()->json($meses);
+        if ($request->has('status') && $request->status) {
+            $meses = $meses->filter(function ($mes) use ($request) {
+                return $mes['status'] === $request->status;
+            });
+        }
+
+        return response()->json($meses->values());
     }
 }
