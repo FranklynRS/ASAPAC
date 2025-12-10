@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './LancamentoEditModal.scss';
 import { AcertosService, Lancamento, Categoria, LancamentoData } from '../services/acertosService';
-import { AuthService } from '../services/auth';
 
 interface LancamentoEditModalProps {
   isOpen: boolean;
@@ -11,7 +10,7 @@ interface LancamentoEditModalProps {
 }
 
 const LancamentoEditModal: React.FC<LancamentoEditModalProps> = ({ isOpen, onClose, lancamento, onLancamentoSaved }) => {
-  const [valor, setValor] = useState<number>(0);
+  const [valor, setValor] = useState<string>('');
   const [descricao, setDescricao] = useState('');
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [selectedCategoriaId, setSelectedCategoriaId] = useState<number | null>(null);
@@ -20,7 +19,7 @@ const LancamentoEditModal: React.FC<LancamentoEditModalProps> = ({ isOpen, onClo
 
   useEffect(() => {
     if (isOpen && lancamento) {
-      setValor(Number(lancamento.valor));
+      setValor(String(lancamento.valor));
       setDescricao(lancamento.descricao);
       setSelectedCategoriaId(lancamento.categoria.id_categoria);
 
@@ -50,7 +49,7 @@ const LancamentoEditModal: React.FC<LancamentoEditModalProps> = ({ isOpen, onClo
     
     try {
       const updatedLancamento: LancamentoData = {
-        valor: valor,
+        valor: Number(valor),
         descricao: descricao,
         id_categoria: selectedCategoriaId,
         id_mes: 0, 
@@ -101,7 +100,7 @@ const LancamentoEditModal: React.FC<LancamentoEditModalProps> = ({ isOpen, onClo
               <input
                 type="number"
                 value={valor}
-                onChange={e => setValor(Number(e.target.value))}
+                onChange={e => setValor(e.target.value)}
                 required
               />
             </div>

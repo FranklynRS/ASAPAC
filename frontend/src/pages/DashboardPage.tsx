@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
+import TopBar from '../components/layout/TopBar'; 
 import MesesPage from './MesesPage';
 import MensageirosPage from './MensageirosPage';
 import AcertosPage from './AcertosPage';
@@ -28,24 +28,35 @@ const DashboardPage: React.FC = () => {
         return <MensageirosPage />;
       case 'Acertos':
         if (selectedMes === null) {
-          return <h2>Por favor, selecione um mês para ver os lançamentos.</h2>;
+          return <h2>Por favor, selecione um mês.</h2>;
         }
         return <AcertosPage idMes={selectedMes.id} mesNome={selectedMes.nome} onVoltarClick={() => handleMenuClick('Meses')} />;
       case 'Categorias':
         return <CategoriasPage />;
       default:
-        return <h2>Dashboard - Conteúdo principal aqui</h2>;
+        return <h2>Conteúdo não encontrado</h2>;
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <Header />
-      <div style={{ display: 'flex', flex: 1 }}>
-        <Sidebar onMenuClick={handleMenuClick} activePage={activePage} />
-        <main style={{ flex: 1, padding: '24px', background: '#f8f9fa' }}>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      
+      <Sidebar onMenuClick={handleMenuClick} activePage={activePage} />
+      
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100vh', overflow: 'hidden' }}>
+        
+        <TopBar />
+
+        <main style={{ 
+            flex: 1, 
+            background: '#f8f9fa', 
+            overflowY: 'auto', 
+            overflowX: 'hidden',
+            position: 'relative'
+        }}>
           {renderContent()}
         </main>
+
       </div>
     </div>
   );

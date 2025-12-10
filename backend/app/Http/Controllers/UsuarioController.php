@@ -11,7 +11,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuarioController extends Controller
 {
-    // Cadastro
     public function store(Request $request)
     {
         try {
@@ -28,8 +27,6 @@ class UsuarioController extends Controller
 
             $data['senha_usuario'] = bcrypt($data['senha_usuario']);
             $usuario = Usuario::create($data);
-
-            // Gera token JWT
             $token = JWTAuth::fromUser($usuario);
 
             return response()->json([
@@ -43,32 +40,29 @@ class UsuarioController extends Controller
         }
     }
 
-    // Login
     public function login(Request $request)
     {
-    $data = $request->validate([
-        'email_usuario' => 'required|email',
-        'senha_usuario' => 'required|string',
-    ]);
+        $data = $request->validate([
+            'email_usuario' => 'required|email',
+            'senha_usuario' => 'required|string',
+        ]);
 
-    $usuario = Usuario::where('email_usuario', $data['email_usuario'])->first();
+        $usuario = Usuario::where('email_usuario', $data['email_usuario'])->first();
 
-    if (!$usuario || !Hash::check($data['senha_usuario'], $usuario->senha_usuario)) {
-        return response()->json(['message' => 'Credenciais inválidas'], 401);
+        if (!$usuario || !Hash::check($data['senha_usuario'], $usuario->senha_usuario)) {
+            return response()->json(['message' => 'Credenciais inválidas'], 401);
+        }
+
+        $token = JWTAuth::fromUser($usuario);
+
+        return response()->json([
+            'message' => 'Login realizado com sucesso',
+            'usuario' => $usuario,
+            'token' => $token,
+        ]);
     }
 
-    // Gera token manualmente
-    $token = JWTAuth::fromUser($usuario);
-
-    return response()->json([
-        'message' => 'Login realizado com sucesso',
-        'usuario' => $usuario,
-        'token' => $token,
-    ]);
-}
-
-    // Edição
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
     {
         $usuario = Usuario::findOrFail($id);
 
@@ -86,14 +80,29 @@ class UsuarioController extends Controller
                     'email',
                     Rule::unique('usuarios', 'email_usuario')->ignore($usuario->id_usuario, 'id_usuario'),
                 ],
-                'senha_usuario' => 'sometimes|required|string|min:6',
+                'senha_usuario' => 'sometimes|nullable|string|min:6',
+                'foto' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', 
             ], $mensagens);
 
-            if (isset($data['senha_usuario'])) {
-                $data['senha_usuario'] = bcrypt($data['senha_usuario']);
+            if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+                
+                if ($usuario->foto_usuario && file_exists(public_path($usuario->foto_usuario))) {
+                    unlink(public_path($usuario->foto_usuario));
+                }
+
+                $imageName = time() . '.' . $request->foto->extension();
+                $request->foto->move(public_path('uploads/usuarios'), $imageName);
+                
+                $usuario->foto_usuario = 'uploads/usuarios/' . $imageName;
             }
 
-            $usuario->update($data);
+            if (isset($data['nome_usuario'])) $usuario->nome_usuario = $data['nome_usuario'];
+            if (isset($data['email_usuario'])) $usuario->email_usuario = $data['email_usuario'];
+            if (!empty($data['senha_usuario'])) {
+                $usuario->senha_usuario = bcrypt($data['senha_usuario']);
+            }
+
+            $usuario->save();
 
             return response()->json(['message' => 'Usuário atualizado com sucesso', 'usuario' => $usuario]);
 
@@ -102,7 +111,6 @@ class UsuarioController extends Controller
         }
     }
 
-    // Pesquisa
     public function index(Request $request)
     {
         $query = Usuario::query();
@@ -120,20 +128,17 @@ class UsuarioController extends Controller
         return response()->json($usuarios);
     }
 
-    // Retorna usuário autenticado (rota protegida)
     public function me()
     {
         return response()->json(auth()->user());
     }
 
-    // Logout (invalida token)
     public function logout()
     {
         auth()->logout();
-        return response()->json(['message ' => 'Logout realizado com sucesso']);
+        return response()->json(['message' => 'Logout realizado com sucesso']);
     }
 
-    // Refresh token
     public function refresh()
     {
         return response()->json([

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './MesesPage.scss';
 import { MesesService } from '../services/mesesService';
 import refreshIcon from '../assets/refresh.png';
-import { AuthService } from '../services/auth';
 
 interface Mes {
   id: number;
@@ -21,7 +20,6 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newMonth, setNewMonth] = useState('');
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const fetchMeses = async () => {
     setIsLoading(true);
@@ -58,16 +56,19 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
   };
 
   const handleDownloadReport = (idMes: number, mesNome: string) => {
-    // A rota /api/relatorio/{id_mes}/emitir retorna o HTML
     const urlRelatorio = `http://127.0.0.1:8000/api/relatorio/${idMes}/emitir`;
-    
-    // Abre a URL em uma nova aba/janela. O JavaScript no Blade fará o window.print()
     const printWindow = window.open(urlRelatorio, '_blank');
-    
     if (!printWindow) {
       alert("Falha ao abrir a janela de impressão. Por favor, verifique se seu navegador está bloqueando pop-ups.");
     }
-    
+  };
+
+  const handleDownloadReport2 = (idMes: number) => {
+    const urlRelatorio = `http://127.0.0.1:8000/api/relatorio/${idMes}/emitir2`;
+    const printWindow = window.open(urlRelatorio, '_blank');
+    if (!printWindow) {
+      alert("Falha ao abrir a janela de impressão. Por favor, verifique se seu navegador está bloqueando pop-ups.");
+    }
   };
 
   useEffect(() => {
@@ -113,7 +114,7 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
       <div className="meses-search-bar-row">
         <input 
           type="text" 
-          placeholder="Pesquisar mês" 
+          placeholder="Pesquisar mês..." 
           className="meses-search" 
           value={searchTerm} 
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -140,7 +141,14 @@ const MesesPage: React.FC<MesesPageProps> = ({ onLancamentosClick }) => {
                         className="meses-row__button-relatorio" 
                         onClick={() => handleDownloadReport(month.id, month.nome)} 
                     >
-                        Relatório
+                        Relatório 1
+                    </button>
+                    
+                    <button 
+                        className="meses-row__button-relatorio-alt" 
+                        onClick={() => handleDownloadReport2(month.id)} 
+                    >
+                        Relatório 2
                     </button>
                 </div>
               </div>

@@ -11,7 +11,7 @@ interface LancamentoFormModalProps {
 }
 
 const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClose, onLancamentoSaved, idMes }) => {
-  const [valor, setValor] = useState<number>(0);
+  const [valor, setValor] = useState<string>('');
   const [descricao, setDescricao] = useState('');
   const [tipo, setTipo] = useState<'recebimento' | 'pagamento'>('recebimento');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +21,8 @@ const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClo
 
   useEffect(() => {
     if (isOpen) {
+      setValor(''); 
+      setDescricao('');
       const fetchData = async () => {
         try {
           const fetchedCategorias = await AcertosService.fetchCategorias();
@@ -55,7 +57,7 @@ const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClo
     
     try {
       const lancamentoData: LancamentoData = {
-        valor: valor,
+        valor: Number(valor),
         descricao: descricao,
         tipo: tipo === 'recebimento' ? 1 : 0,
         id_mes: idMes,
@@ -133,7 +135,7 @@ const LancamentoFormModal: React.FC<LancamentoFormModalProps> = ({ isOpen, onClo
             <input
               type="number"
               value={valor}
-              onChange={e => setValor(Number(e.target.value))}
+              onChange={e => setValor(e.target.value)} 
               required
             />
           </div>

@@ -1,14 +1,12 @@
 import React from 'react';
 import logoAsapac from '../../assets/logoasapac.png';
-import mensageiroIcon from '../../assets/mensageiros_icon.png';
-import acertosIcon from '../../assets/acertos_icon.png';
 import mesesIcon from '../../assets/meses_icon.png';
+import mensageiroIcon from '../../assets/mensageiros_icon.png';
 import categoriaIcon from '../../assets/categoria.png';
-import mensageiroIconAlt from '../../assets/mensageiros_icon_alt.png';
-import acertosIconAlt from '../../assets/acertos_icon_alt.png';
 import mesesIconAlt from '../../assets/meses_icon_alt.png';
+import mensageiroIconAlt from '../../assets/mensageiros_icon_alt.png';
 import categoriaIconAlt from '../../assets/categoria_alt.png';
-import { useAuth } from '../../contexts/AuthContext';
+
 import './Sidebar.scss';
 
 interface SidebarProps {
@@ -17,16 +15,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activePage }) => {
-  const { logout } = useAuth();
   
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
-  };
-
   const handleMenuClick = (item: string) => {
     onMenuClick(item);
   };
@@ -73,10 +62,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activePage }) => {
           <span className="sidebar__text">Categorias</span>
         </button>
       </nav>
-
-      <button className="sidebar__item sidebar__item--logout" onClick={handleLogout}>
-        <span className="sidebar__text">Sair</span>
-      </button>
     </aside>
   );
 };
