@@ -21,7 +21,7 @@ Route::put('/usuarios/{id}', [UsuarioController::class, 'update']);
 
 // ROTAS DE RELATÓRIO
 Route::get('/relatorio/{id_mes}/emitir', [RelatorioController::class, 'emitirRelatorio']);
-Route::get('/relatorio/{id_mes}/emitir2', [RelatorioController::class, 'emitirRelatorio2']); // <--- NOVA ROTA
+Route::get('/relatorio/{id_mes}/emitir2', [RelatorioController::class, 'emitirRelatorio2']);
 
 Route::middleware('jwt.auth')->group(function () {
 
